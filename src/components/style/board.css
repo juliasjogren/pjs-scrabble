@@ -1,0 +1,128 @@
+.board {
+  height: 92%;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  grid-column-gap: 5%;
+  justify-content: center;
+  align-content: center;
+  grid-row-gap: 3vh;
+}
+
+.cells {
+  grid-column: 1;
+  grid-row: 1;
+  height: 100%;
+  display: grid;
+  border: 2px solid black;
+  grid-template-columns: repeat(15, 5vmin);
+  grid-template-rows: repeat(15, 5vmin);
+  width: fit-content;
+}
+
+.cell {
+  border: 1px solid black;
+  background-color: white;
+  user-select: none;
+  cursor: pointer;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 4vmin;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* padding: 20%; */
+  /* padding: 8px; */
+
+  transition: background-color 0.3s;
+}
+.cell.clickable {
+  background-color: green;
+}
+.cell.locked {
+  background-color: red;
+}
+.cell:hover {
+  background-color: limegreen;
+}
+
+.playerCells {
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(7, 5vmin);
+  justify-content: center;
+  align-items: center;
+  grid-column-gap: 0.5vh;
+}
+
+.playerCell {
+  background-color: white;
+  border: 2px solid black;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 3vmin;
+  align-items: center;
+  height: 5vmin;
+}
+.playerCell.active,
+.playerCell:hover {
+  background-color: limegreen;
+}
+
+.stuff {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 50% 50%;
+  grid-column-gap: 15%;
+  justify-items: center;
+  align-items: end;
+}
+.activeTiles {
+  font-size: 30px;
+  color: white;
+  align-self: center;
+  grid-column: 1 / span 2;
+  font-weight: bold;
+}
+
+.shuffleButton {
+  display: flex;
+  color: green;
+  grid-row: 2;
+  background-color: white;
+  border: 4px solid black;
+  border-radius: 10%;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 3vmin;
+  height: 10vmin;
+  width: 15vmin;
+  align-items: center;
+  justify-content: center;
+}
+.shuffleButton:hover {
+  background-color: #282c34;
+}
+
+.executeButton {
+  display: flex;
+  color: red;
+  grid-row: 2;
+  background-color: white;
+  border: 3px solid black;
+  border-radius: 10%;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 3vmin;
+  height: 10vmin;
+  width: 15vmin;
+  align-items: center;
+  justify-content: center;
+}
+.executeButton:hover {
+  background-color: #282c34;
+}

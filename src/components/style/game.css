@@ -1,0 +1,15 @@
+.game {
+  height: 100%;
+  width: 100%;
+  background-color: rgb(170, 16, 42);
+}
+
+.game-header {
+  background-color: #282c34;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 8%;
+}
