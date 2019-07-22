@@ -399,7 +399,11 @@ const Board = ({ startingBag }) => {
       <div className="cells">
         {boardCells.map(cell => (
           <BoardCell cell={cell} key={cell.index} onClick={() => cellClick(cell)}>
-            {cell.tile && cell.tile.letter}
+            {cell.tile && (
+              <div className="tile">
+                {cell.tile.letter}
+              </div>
+            )}
           </BoardCell>
         ))}
       </div>
@@ -412,7 +416,11 @@ const Board = ({ startingBag }) => {
             key={playerCell.index}
             onClick={() => playerCellClick(playerCell)}
           >
-            {playerCell.tile && playerCell.tile.letter}
+            {playerCell.tile && (
+              <div className="tile">
+                {playerCell.tile.letter}
+              </div>
+            )}
           </div>
         ))}
       </div>
