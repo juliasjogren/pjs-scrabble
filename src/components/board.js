@@ -328,6 +328,13 @@ const Board = ({ startingBag }) => {
       }
 
       setBoardCells(newBoardCells);
+      setPlayerCells(
+        playerCells.map(cell => {
+          if (cell.tile && cell.tile.id === activeTile.id) cell.tile = null;
+
+          return cell;
+        })
+      );
       setActiveTile(null);
     }
 
@@ -342,13 +349,6 @@ const Board = ({ startingBag }) => {
 
     if (tile) {
       setActiveTile(tile);
-      setPlayerCells(
-        playerCells.map(cell => {
-          if (cell.tile && cell.tile.id === tile.id) cell.tile = null;
-
-          return cell;
-        })
-      );
     }
   };
 
