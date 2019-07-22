@@ -18,11 +18,16 @@
   grid-template-columns: repeat(15, 5vmin);
   grid-template-rows: repeat(15, 5vmin);
   width: fit-content;
-}
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7));
+  /* transform: 
+    rotate3d(1, 0, 0, 25deg)
+    rotate3d(0, 1, 0, 5deg)
+    rotate3d(0, 0, 1, -3deg); */
+  }
 
 .cell {
   border: 1px solid black;
-  background-color: white;
+  background-color: wheat;
   user-select: none;
   cursor: pointer;
   text-align: center;
@@ -37,14 +42,24 @@
 
   transition: background-color 0.3s;
 }
-.cell.clickable {
+.cell.clickable:not(.locked) {
   background-color: green;
 }
-.cell.locked {
-  background-color: red;
-}
-.cell:hover {
+.cell.clickable:not(.locked):hover {
   background-color: limegreen;
+}
+.cell.locked {
+  position: relative;
+}
+.cell.locked .tile::after {
+  content: "";
+  display:block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .playerCells {
@@ -58,7 +73,7 @@
 }
 
 .playerCell {
-  background-color: white;
+  background-color: wheat;
   border: 2px solid black;
   display: flex;
   cursor: pointer;

@@ -1,7 +1,8 @@
 .game {
   height: 100%;
   width: 100%;
-  background-color: rgb(170, 16, 42);
+  /* background-color: rgb(170, 16, 42); */
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .game-header {
