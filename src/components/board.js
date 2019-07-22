@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import classNames from "classnames";
 
 import BoardCell from "./boardCell";
 
@@ -405,7 +406,9 @@ const Board = ({ startingBag }) => {
       <div className="playerCells">
         {playerCells.map(playerCell => (
           <div
-            className={`playerCell ${isPlayerCellActive(playerCell) && "active"}`}
+            className={classNames("playerCell",
+              { active: isPlayerCellActive(playerCell) }
+            )}
             key={playerCell.index}
             onClick={() => playerCellClick(playerCell)}
           >
