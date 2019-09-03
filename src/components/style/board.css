@@ -23,7 +23,7 @@
     rotate3d(1, 0, 0, 25deg)
     rotate3d(0, 1, 0, 5deg)
     rotate3d(0, 0, 1, -3deg); */
-  }
+}
 
 .cell {
   border: 1px solid black;
@@ -53,7 +53,7 @@
 }
 .cell.locked .tile::after {
   content: "";
-  display:block;
+  display: block;
   position: absolute;
   top: 0;
   left: 0;
@@ -93,8 +93,14 @@
   height: 80%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   background-color: grey;
+}
+
+.tilePoints {
+  color: gold;
+  font-size: x-small;
+  align-self: flex-end;
 }
 
 .stuff {
@@ -105,6 +111,13 @@
   justify-items: center;
   align-items: end;
 }
+
+.activePlayer {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 15px;
+}
+
 .activeTiles {
   font-size: 30px;
   color: white;
