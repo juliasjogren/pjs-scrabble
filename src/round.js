@@ -39,48 +39,35 @@ export function manageCellNeighbors(cell, action) {
   }
 }
 
-const findNeighborsDirection = (list, clickedCell) => {
-  let lockedNeighborsInRound = [];
-  let neighbors = [];
+const findNeighborsDirection = list => {
+  let lockedNeighbors = [];
 
-  for (let i = 0; i < list.length; i++) {
-    if (list[i].index + 1 === clickedCell.index) {
-      neighbors = findLockedNeighborsInRound(list[i], -1);
-    }
-    if (list[i].index - 1 === clickedCell.index) {
-      neighbors = findLockedNeighborsInRound(list[i], 1);
-    }
-    if (list[i].index - 15 === clickedCell.index) {
-      neighbors = findLockedNeighborsInRound(list[i], 15);
-    }
-    if (list[i].index + 15 === clickedCell.index) {
-      neighbors = findLockedNeighborsInRound(list[i], -15);
-    }
+  list.forEach(cell => {
+    let l = findLockedNeighborsInRound(cell, -1);
+    l.forEach(cell => lockedNeighbors.push(cell));
+    let r = findLockedNeighborsInRound(cell, +1);
+    r.forEach(cell => lockedNeighbors.push(cell));
+    let u = findLockedNeighborsInRound(cell, -15);
+    u.forEach(cell => lockedNeighbors.push(cell));
+    let d = findLockedNeighborsInRound(cell, +15);
+    d.forEach(cell => lockedNeighbors.push(cell));
+  });
 
-    neighbors.forEach(cell => {
-      lockedNeighborsInRound.push(cell);
-    });
-  }
-  // console.log(lockedNeighborsInRound, "locked neighbors in line");
-
-  return lockedNeighborsInRound;
+  return lockedNeighbors;
 };
 
-const findCellsInRound = (newBoardCells, clickedCell) => {
-  // let newBoardCells = [...boardCells];
+export const findCellsInRound = (newBoardCells, clickedCell) => {
   let newActiveCells = boardCells.filter(cell => !!cell.tile && !cell.locked);
 
-  let neighbors = findNeighbors(newBoardCells, clickedCell);
-  let lockedNeighbors = neighbors.filter(cell => cell.locked);
+  let direction = determineDirection();
 
-  let moreLockedNeighbors = findNeighborsDirection(lockedNeighbors, clickedCell);
+  let moreLockedNeighbors = findNeighborsDirection(newActiveCells, direction);
 
-  let cellsInRound = [...newActiveCells, ...lockedNeighbors, ...moreLockedNeighbors, clickedCell];
+  let cellsInRound = [...newActiveCells, ...moreLockedNeighbors, clickedCell];
+  roundCells = [...new Set(cellsInRound)];
 
-  roundCells = cellsInRound.filter((v, i) => cellsInRound.indexOf(v) === i);
-  // let roundCells = [...new Set(cellsInRound)];
-
-  console.log("roundCells", roundCells);
+  // console.log("roundCells", roundCells);
+  // roundCells.forEach(cell => console.log(cell.tile.letter));
 
   return roundCells;
 };
@@ -266,8 +253,8 @@ const makeMainWord = (roundCells = [], direction = "no", clickedCell) => {
   });
   mainWord.sort((a, b) => a.index - b.index);
 
-  console.log("main word");
-  mainWord.forEach(cell => console.log(cell.tile.letter));
+  // console.log("main word");
+  // mainWord.forEach(cell => console.log(cell.tile.letter));
 
   return mainWord;
 };
@@ -276,8 +263,8 @@ export const moveTileToPlayerCells = (tile, newBoardCells, newPlayerCells) => {
   playerCells = newPlayerCells;
   boardCells = newBoardCells;
   let found = false;
-  console.log("newplayer cells", newPlayerCells);
-  console.log("playercells", playerCells);
+  // console.log("newplayer cells", newPlayerCells);
+  // console.log("playercells", playerCells);
   playerCells = playerCells.map(playerCell => {
     if (!found && !playerCell.tile) {
       playerCell.tile = tile;
@@ -303,7 +290,7 @@ export function cellClick(clickedCell, activeTile, newBoardCells, newPlayerCells
     moveTileToPlayerCells(clickedCell.tile, boardCells, playerCells);
     clickedCell.tile = null;
   }
-  console.log("clicked cell", clickedCell);
+  // console.log("clicked cell", clickedCell);
 
   if (activeTile && !clickedCell.tile) {
     clickedCell.tile = activeTile;

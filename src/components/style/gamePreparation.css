@@ -1,0 +1,149 @@
+.gamePreparation {
+  width: 100%;
+  height: 100%;
+}
+
+.playerPreparation {
+  height: 20%;
+  display: grid;
+  grid-template-columns: 50% 25% 25%;
+  background-color: rgba(0, 0, 0, 0.7);
+  align-content: center;
+}
+
+.playerNameInput {
+  grid-column: 1;
+  margin-left: 2%;
+  padding: 3%;
+  background-color: #282c34;
+}
+
+input {
+  width: 78%;
+  background-color: grey;
+  border: 2px solid black;
+}
+
+.colorSelect {
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding-top: 3%;
+  width: 80%;
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: 20% 20% 20%;
+  grid-template-rows: 50% 50%;
+}
+
+.blue {
+  background-color: rgb(16, 145, 224);
+  border: 2px solid rgba(0, 0, 0.849);
+  cursor: pointer;
+  height: 20px;
+  color: rgb(16, 145, 224);
+  grid-row: 1;
+  grid-column: 1;
+}
+.purple {
+  background-color: purple;
+  border: 2px solid rgba(0, 0, 0.849);
+  cursor: pointer;
+  height: 20px;
+  color: purple;
+  grid-row: 1;
+  grid-column: 2;
+}
+.red {
+  background-color: rgb(189, 57, 33);
+  border: 2px solid rgba(0, 0, 0.849);
+  cursor: pointer;
+  height: 20px;
+  color: rgb(189, 57, 33);
+  grid-row: 1;
+  grid-column: 3;
+}
+.pink {
+  background-color: rgb(228, 47, 137);
+  border: 2px solid rgba(0, 0, 0.849);
+  cursor: pointer;
+  height: 20px;
+  color: rgb(228, 47, 137);
+  grid-row: 2;
+  grid-column: 1;
+}
+.yellow {
+  background-color: rgb(226, 226, 39);
+  border: 2px solid rgba(0, 0, 0.849);
+  cursor: pointer;
+  height: 20px;
+  color: rgb(226, 226, 39);
+  grid-row: 2;
+  grid-column: 2;
+}
+.green {
+  background-color: rgb(31, 113, 31);
+  border: 2px solid rgba(0, 0, 0.849);
+  cursor: pointer;
+  height: 20px;
+  color: rgb(31, 113, 31);
+  grid-row: 2;
+  grid-column: 3;
+}
+
+.blue.selected {
+  border: 2px solid lime;
+}
+
+.purple.selected {
+  border: 2px solid lime;
+}
+.red.selected {
+  border: 2px solid lime;
+}
+.pink.selected {
+  border: 2px solid lime;
+}
+.yellow.selected {
+  border: 2px solid lime;
+}
+.green.selected {
+  border: 2px solid lime;
+}
+
+.addPlayerBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-column: 3;
+  margin-right: 2%;
+  background-color: #282c34;
+  border: 2px solid black;
+}
+
+.pBtn {
+  width: 80%;
+  height: 80%;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  background-color: grey;
+  padding: 2%;
+  border: 2px solid rgba(0, 0, 0.849);
+}
+
+.players {
+  width: 100%;
+  margin-top: 5%;
+  background-color: rgba(0, 0, 0, 0.7);
+  height: 150px;
+  display: grid;
+  grid-template-columns: 20% 20% 20%;
+  grid-template-rows: 50% 50%;
+}
+
+.player {
+  width: 100%;
+  height: 50px;
+  background-color: lime;
+}

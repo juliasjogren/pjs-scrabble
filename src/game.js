@@ -1,27 +1,42 @@
+// import React from "react";
+// import StartWindow from "./components/startWindow";
+
 import {
   createBoardCells,
   createBag,
   createPlayerCells,
   drawTilesFromBag,
-  lockTilesWithLetter
+  lockTilesWithLetter,
+  executePoints
 } from "./utils";
 
 let boardCells = createBoardCells();
 let bag = createBag();
 // let playerCells = createPlayerCells(bag);
-let roundCells = [];
+// let roundCells = [];
 let numberOfPlayers = 4;
 let players = [];
 let activePlayer = null;
+
+// export function checkStartWindow(startWindowActive) {
+//   if (startWindowActive && startWindowActive === true) {
+//     return <StartWindow startWindowActive={true} />;
+//   } else {
+//     return <div></div>;
+//   }
+// }
 
 const createPlayers = () => {
   for (let i = 1; i <= numberOfPlayers; i++) {
     let player = {};
     player.id = i;
+    player.name = "Player_" + player.id;
     player.playerCells = createPlayerCells(bag);
+    player.points = 0;
     players.push(player);
   }
   activePlayer = players.find(player => player.id === 1);
+  activePlayer.active = true;
   console.log(players);
 };
 
@@ -40,11 +55,11 @@ export const setup = () => {
   return game;
 };
 
-// export function checkIfTilesLeftInBag(bag) {
-//   if (bag.length === 0) {
-//     return false;
-//   } else return true;
-// }
+export function checkIfTilesLeftInBag(bag) {
+  if (bag.length === 0) {
+    return false;
+  } else return true;
+}
 
 const lockWord = () => {
   lockTilesWithLetter(boardCells);
@@ -69,21 +84,26 @@ const drawTiles = () => {
 
 const changeActivePlayer = () => {
   if (activePlayer.id === numberOfPlayers) {
-    activePlayer = players.shift();
+    activePlayer = players[0];
+    activePlayer.active = true;
   } else {
     activePlayer = players.find(player => player.id === activePlayer.id + 1);
+    activePlayer.active = true;
   }
 };
 
-export function execute() {
+export function execute(roundCells) {
   console.log("execute");
   lockWord();
   drawTiles();
   console.log(bag);
-  if (activePlayer.playerCells.length === 0) {
+  let wordPoints = executePoints(roundCells);
+  activePlayer.points += wordPoints;
+  let noTilesLeft = activePlayer.playerCells.find(cell => cell.tile);
+  if (!noTilesLeft) {
     console.log("GAME OVER!!!");
   }
-  roundCells = [];
+  activePlayer.active = false;
   changeActivePlayer();
 }
 

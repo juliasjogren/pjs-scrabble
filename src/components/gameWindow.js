@@ -1,23 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 
-import testBoard from "./testBoard";
+import StartWindow from "./startWindow";
 import Board from "./board";
-import { createBag } from "../utils";
 
-import "./style/game.css";
+import "./style/gameWindow.css";
 
 const GameWindow = () => {
-  React.useEffect(() => {
-    // console.log("game mount");
-  }, []);
+  const [showMenu, setShowMenu] = useState(true);
+  // const toggleShowMenu = () => setShowMenu(!showMenu);
 
   return (
-    <div className="game">
-      <div className="game-header">
-        <span>Welcome to Scrabble</span>
-      </div>
-      {/* <testBoard startingBag={bag} /> */}
+    <div className="gameWindow">
+      <div
+        className="game-header"
+        style={{ cursor: "pointer" }}
+        onClick={() => setShowMenu(true)}
+      ></div>
+      {showMenu && <StartWindow onClose={() => setShowMenu(false)} />}
       <Board />
+      <div className="game-footer"></div>
     </div>
   );
 };

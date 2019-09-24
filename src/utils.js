@@ -27,34 +27,34 @@ let alfa = [
   { letter: "Z", amount: 1, points: 10 }
 ];
 
-let alfaTest = [
-  { letter: "A", amount: 5, points: 1 },
-  { letter: "B", amount: 5, points: 3 },
-  { letter: "C", amount: 5, points: 3 },
-  { letter: "D", amount: 1, points: 4 },
-  { letter: "E", amount: 1, points: 1 },
-  { letter: "F", amount: 1, points: 4 },
-  { letter: "G", amount: 1, points: 2 },
-  { letter: "H", amount: 1, points: 4 },
-  { letter: "I", amount: 1, points: 1 },
-  { letter: "J", amount: 1, points: 8 },
-  { letter: "K", amount: 1, points: 5 },
-  { letter: "L", amount: 1, points: 1 },
-  { letter: "M", amount: 1, points: 3 },
-  { letter: "N", amount: 1, points: 1 },
-  { letter: "O", amount: 1, points: 1 },
-  { letter: "P", amount: 2, points: 3 },
-  { letter: "Q", amount: 1, points: 10 },
-  { letter: "R", amount: 1, points: 1 },
-  { letter: "S", amount: 1, points: 1 },
-  { letter: "T", amount: 1, points: 1 },
-  { letter: "U", amount: 1, points: 1 },
-  { letter: "V", amount: 1, points: 4 },
-  { letter: "W", amount: 2, points: 4 },
-  { letter: "X", amount: 1, points: 8 },
-  { letter: "Y", amount: 2, points: 4 },
-  { letter: "Z", amount: 1, points: 10 }
-];
+// let alfaTest = [
+//   { letter: "A", amount: 5, points: 1 },
+//   { letter: "B", amount: 1, points: 3 },
+//   { letter: "C", amount: 1, points: 3 },
+//   { letter: "D", amount: 1, points: 4 },
+//   { letter: "E", amount: 1, points: 1 },
+//   { letter: "F", amount: 1, points: 4 },
+//   { letter: "G", amount: 1, points: 2 },
+//   { letter: "H", amount: 1, points: 4 },
+//   { letter: "I", amount: 1, points: 1 },
+//   { letter: "J", amount: 1, points: 8 },
+//   { letter: "K", amount: 1, points: 5 },
+//   { letter: "L", amount: 1, points: 1 },
+//   { letter: "M", amount: 1, points: 3 },
+//   { letter: "N", amount: 1, points: 1 },
+//   { letter: "O", amount: 1, points: 1 },
+//   { letter: "P", amount: 2, points: 3 },
+//   { letter: "Q", amount: 1, points: 10 },
+//   { letter: "R", amount: 1, points: 1 },
+//   { letter: "S", amount: 1, points: 1 },
+//   { letter: "T", amount: 1, points: 1 },
+//   { letter: "U", amount: 1, points: 1 },
+//   { letter: "V", amount: 1, points: 4 },
+//   { letter: "W", amount: 2, points: 4 },
+//   { letter: "X", amount: 1, points: 8 },
+//   { letter: "Y", amount: 2, points: 4 },
+//   { letter: "Z", amount: 1, points: 10 }
+// ];
 
 export function createBoardCells() {
   function BoardCell(index) {
@@ -75,7 +75,7 @@ export function createBoardCells() {
 }
 
 export function createBag() {
-  const tilesInBag = alfaTest.reduce((total, letter) => {
+  const tilesInBag = alfa.reduce((total, letter) => {
     return total + letter.amount;
   }, 0);
 
@@ -176,17 +176,36 @@ export const lockTilesWithLetter = cells =>
 // rewrite as a generator function (function*)
 let letterCount = 0;
 
+// export const findCellsInRound = (newBoardCells, clickedCell) => {
+//   // let newBoardCells = [...boardCells];
+//   let newActiveCells = newBoardCells.filter(cell => !!cell.tile && !cell.locked);
+
+//   let neighbors = findNeighbors(newBoardCells, clickedCell);
+//   let lockedNeighbors = neighbors.filter(cell => cell.locked);
+
+//   let moreLockedNeighbors = findNeighborsDirection(lockedNeighbors, clickedCell);
+
+//   let cellsInRound = [...newActiveCells, ...lockedNeighbors, ...moreLockedNeighbors, clickedCell];
+
+//   let roundCells = cellsInRound.filter((v, i) => cellsInRound.indexOf(v) === i);
+//   // let roundCells = [...new Set(cellsInRound)];
+
+//   console.log("roundCells", roundCells);
+
+//   return roundCells;
+// };
+
 const drawTileFromBag = () => {
-  const tilesInBag = alfaTest.reduce((total, letter) => {
+  const tilesInBag = alfa.reduce((total, letter) => {
     return total + letter.amount;
   }, 0);
 
   if (tilesInBag === 0) return console.log("No tiles left") || { letter: "NOPE" };
 
-  var letter = alfaTest[Math.floor(Math.random() * alfaTest.length)];
-  const result = alfaTest.find(alfaTest => alfaTest.letter === letter.letter);
+  var letter = alfa[Math.floor(Math.random() * alfa.length)];
+  const result = alfa.find(alfa => alfa.letter === letter.letter);
   result.amount -= 1;
-  alfaTest = alfaTest.filter(alfaTest => alfaTest.amount > 0);
+  alfa = alfa.filter(alfa => alfa.amount > 0);
   letterCount++;
   // console.log("Letters drawn", letterCount);
   // console.log(
