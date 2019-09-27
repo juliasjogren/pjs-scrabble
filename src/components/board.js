@@ -42,13 +42,14 @@ const Board = () => {
   };
 
   const executeClick = () => {
-    console.log("round cells in board", roundCells);
+    // console.log("round cells in board", roundCells);
     // roundCells.forEach(cell => console.log(cell.tile.letter));
     execute(roundCells);
     const { boardCells, activePlayer } = setup();
     setBoardCells(boardCells);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
+    setRoundCells([]);
     // setActiveTile(null);
   };
 

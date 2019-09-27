@@ -1,5 +1,5 @@
 // import React from "react";
-// import StartWindow from "./components/startWindow";
+// import StartWindow from "./components/startWindow";'
 
 import {
   createBoardCells,
@@ -93,18 +93,26 @@ const changeActivePlayer = () => {
 };
 
 export function execute(roundCells) {
+  // let newRoundCells = roundCells.filter(cell => cell.tile);
   console.log("execute");
   lockWord();
   drawTiles();
-  console.log(bag);
+  console.log("bag", bag);
   let wordPoints = executePoints(roundCells);
   activePlayer.points += wordPoints;
   let noTilesLeft = activePlayer.playerCells.find(cell => cell.tile);
   if (!noTilesLeft) {
     console.log("GAME OVER!!!");
+    let sortedPlayers = players.sort((a, b) => {
+      return a.points - b.points;
+    });
+    let winner = sortedPlayers.pop();
+    console.log("winner", winner.name, winner.points);
+    alert("winner", winner);
+  } else {
+    activePlayer.active = false;
+    changeActivePlayer();
   }
-  activePlayer.active = false;
-  changeActivePlayer();
 }
 
 // export const ShufflePlayerTiles = () => {

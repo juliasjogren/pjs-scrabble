@@ -1,34 +1,59 @@
 .gamePreparation {
-  width: 100%;
-  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
 }
-
 .playerPreparation {
   height: 20%;
+  width: 100%;
   display: grid;
   grid-template-columns: 50% 25% 25%;
+  grid-template-rows: 100%;
   background-color: rgba(0, 0, 0, 0.7);
-  align-content: center;
+  align-items: center;
+  justify-items: center;
+  margin-bottom: 3%;
+  border: 2px solid rgba(0, 0, 0, 0.849);
 }
 
 .playerNameInput {
+  height: 80%;
+  width: 90%;
   grid-column: 1;
-  margin-left: 2%;
-  padding: 3%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #282c34;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  align-items: center;
+  /* padding-top: 3%; */
+  color: black;
+}
+
+.name {
+  font-size: 16px;
+  height: 80%;
 }
 
 input {
-  width: 78%;
+  width: 90%;
+  height: 65%;
   background-color: grey;
-  border: 2px solid black;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  color: black;
+}
+
+input.textInput::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black;
+  opacity: 1; /* Firefox */
+}
+
+input:textinpus::placeholder:focus {
 }
 
 .colorSelect {
-  align-items: center;
   justify-content: center;
-  height: 40px;
-  padding-top: 3%;
   width: 80%;
   grid-column: 2;
   display: grid;
@@ -36,8 +61,8 @@ input {
   grid-template-rows: 50% 50%;
 }
 
-.blue {
-  background-color: rgb(16, 145, 224);
+.teal {
+  background-color: teal;
   border: 2px solid rgba(0, 0, 0.849);
   cursor: pointer;
   height: 20px;
@@ -54,8 +79,8 @@ input {
   grid-row: 1;
   grid-column: 2;
 }
-.red {
-  background-color: rgb(189, 57, 33);
+.darkred {
+  background-color: darkred;
   border: 2px solid rgba(0, 0, 0.849);
   cursor: pointer;
   height: 20px;
@@ -63,8 +88,8 @@ input {
   grid-row: 1;
   grid-column: 3;
 }
-.pink {
-  background-color: rgb(228, 47, 137);
+.Crimson {
+  background-color: Crimson;
   border: 2px solid rgba(0, 0, 0.849);
   cursor: pointer;
   height: 20px;
@@ -81,8 +106,8 @@ input {
   grid-row: 2;
   grid-column: 2;
 }
-.green {
-  background-color: rgb(31, 113, 31);
+.limegreen {
+  background-color: limegreen;
   border: 2px solid rgba(0, 0, 0.849);
   cursor: pointer;
   height: 20px;
@@ -91,59 +116,95 @@ input {
   grid-column: 3;
 }
 
-.blue.selected {
+.teal.selected {
   border: 2px solid lime;
 }
 
 .purple.selected {
   border: 2px solid lime;
 }
-.red.selected {
+.darkred.selected {
   border: 2px solid lime;
 }
-.pink.selected {
+.Crimson.selected {
   border: 2px solid lime;
 }
 .yellow.selected {
   border: 2px solid lime;
 }
-.green.selected {
+.limegreen.selected {
   border: 2px solid lime;
 }
 
 .addPlayerBtn {
+  width: 90%;
+  height: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
   grid-column: 3;
-  margin-right: 2%;
+  /* padding: 5%; */
   background-color: #282c34;
-  border: 2px solid black;
+  border: 2px solid rgba(0, 0, 0, 0.849);
 }
 
 .pBtn {
-  width: 80%;
-  height: 80%;
-  font-size: 16px;
+  width: 85%;
+  height: 65%;
   cursor: pointer;
   text-align: center;
   background-color: grey;
-  padding: 2%;
-  border: 2px solid rgba(0, 0, 0.849);
+  border: 2px solid rgba(0, 0, 0, 0.849);
 }
 
 .players {
   width: 100%;
-  margin-top: 5%;
+  /* margin-top: 5%; */
   background-color: rgba(0, 0, 0, 0.7);
   height: 150px;
-  display: grid;
-  grid-template-columns: 20% 20% 20%;
-  grid-template-rows: 50% 50%;
+  color: white;
+  margin-bottom: 3%;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+}
+.playerTitle {
+}
+
+.playerList {
+  width: 100%;
+  height: calc(100% - (150px + 5%));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: row wrap;
 }
 
 .player {
-  width: 100%;
-  height: 50px;
-  background-color: lime;
+  width: 40%;
+  height: 40px;
+
+  text-align: center;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.startGameButton {
+  width: 30%;
+  height: 15%;
+  /* margin-top: 3%; */
+  display: flex;
+  justify-content: center;
+  /* margin-left: 70%; */
+  align-items: center;
+  background-color: #282c34;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+}
+
+.startGameBtn {
+  background-color: grey;
+  text-align: center;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  cursor: pointer;
+  height: 60%;
+  width: 85%;
 }

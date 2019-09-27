@@ -66,10 +66,12 @@ export const findCellsInRound = (newBoardCells, clickedCell) => {
   let cellsInRound = [...newActiveCells, ...moreLockedNeighbors, clickedCell];
   roundCells = [...new Set(cellsInRound)];
 
+  let newRoundCells = roundCells.filter(cell => cell.tile);
+
   // console.log("roundCells", roundCells);
   // roundCells.forEach(cell => console.log(cell.tile.letter));
 
-  return roundCells;
+  return newRoundCells;
 };
 
 const findUnlockedNeighborsInRound = (cellToCheck, velocity, neighbors) => {

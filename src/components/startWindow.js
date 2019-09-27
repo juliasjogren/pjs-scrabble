@@ -18,6 +18,9 @@ const StartWindow = ({ onClose }) => {
         <div className="startBtn" onClick={() => setShowGamePreparation(true)}>
           <div className="start">Start new game</div>
         </div>
+        <div className="leaderBoardBtn" onClick={() => console.log("LeaderBoard")}>
+          <div className="leaderBoard">Leaderboard</div>
+        </div>
         {showGamePreparation && <GamePreparation />}
       </div>
     </div>

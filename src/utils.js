@@ -1,4 +1,4 @@
-let alfa = [
+let alfaTest = [
   { letter: "A", amount: 9, points: 1 },
   { letter: "B", amount: 2, points: 3 },
   { letter: "C", amount: 2, points: 3 },
@@ -27,34 +27,34 @@ let alfa = [
   { letter: "Z", amount: 1, points: 10 }
 ];
 
-// let alfaTest = [
-//   { letter: "A", amount: 5, points: 1 },
-//   { letter: "B", amount: 1, points: 3 },
-//   { letter: "C", amount: 1, points: 3 },
-//   { letter: "D", amount: 1, points: 4 },
-//   { letter: "E", amount: 1, points: 1 },
-//   { letter: "F", amount: 1, points: 4 },
-//   { letter: "G", amount: 1, points: 2 },
-//   { letter: "H", amount: 1, points: 4 },
-//   { letter: "I", amount: 1, points: 1 },
-//   { letter: "J", amount: 1, points: 8 },
-//   { letter: "K", amount: 1, points: 5 },
-//   { letter: "L", amount: 1, points: 1 },
-//   { letter: "M", amount: 1, points: 3 },
-//   { letter: "N", amount: 1, points: 1 },
-//   { letter: "O", amount: 1, points: 1 },
-//   { letter: "P", amount: 2, points: 3 },
-//   { letter: "Q", amount: 1, points: 10 },
-//   { letter: "R", amount: 1, points: 1 },
-//   { letter: "S", amount: 1, points: 1 },
-//   { letter: "T", amount: 1, points: 1 },
-//   { letter: "U", amount: 1, points: 1 },
-//   { letter: "V", amount: 1, points: 4 },
-//   { letter: "W", amount: 2, points: 4 },
-//   { letter: "X", amount: 1, points: 8 },
-//   { letter: "Y", amount: 2, points: 4 },
-//   { letter: "Z", amount: 1, points: 10 }
-// ];
+let alfa = [
+  { letter: "A", amount: 5, points: 1 },
+  { letter: "B", amount: 1, points: 3 },
+  { letter: "C", amount: 1, points: 3 },
+  { letter: "D", amount: 1, points: 4 },
+  { letter: "E", amount: 1, points: 1 },
+  { letter: "F", amount: 1, points: 4 },
+  { letter: "G", amount: 1, points: 2 },
+  { letter: "H", amount: 1, points: 4 },
+  { letter: "I", amount: 1, points: 1 },
+  { letter: "J", amount: 1, points: 8 },
+  { letter: "K", amount: 1, points: 5 },
+  { letter: "L", amount: 1, points: 1 },
+  { letter: "M", amount: 1, points: 3 },
+  { letter: "N", amount: 1, points: 1 },
+  { letter: "O", amount: 1, points: 1 },
+  { letter: "P", amount: 2, points: 3 },
+  { letter: "Q", amount: 1, points: 10 },
+  { letter: "R", amount: 1, points: 1 },
+  { letter: "S", amount: 1, points: 1 },
+  { letter: "T", amount: 1, points: 1 },
+  { letter: "U", amount: 1, points: 1 },
+  { letter: "V", amount: 1, points: 4 },
+  { letter: "W", amount: 2, points: 4 },
+  { letter: "X", amount: 1, points: 8 },
+  { letter: "Y", amount: 2, points: 4 },
+  { letter: "Z", amount: 1, points: 10 }
+];
 
 export function createBoardCells() {
   function BoardCell(index) {

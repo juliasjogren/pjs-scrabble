@@ -1,7 +1,7 @@
 import React from "react";
 
 const activePlayerInfo = ({ activePlayer }) => {
-  console.log("active player", activePlayer);
+  // console.log("active player", activePlayer);
 
   return (
     <div className="activePlayerInfo">

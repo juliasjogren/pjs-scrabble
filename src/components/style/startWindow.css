@@ -12,10 +12,10 @@
 .startMenu {
   display: grid;
   grid-template-columns: 15% 70% 15%;
-  grid-template-rows: 10% 35% 55%;
+  grid-template-rows: 10% 15% 15% 60%;
   justify-items: center;
-  width: 70%;
-  height: 80%;
+  width: 85%;
+  height: 90%;
   background-color: rgba(0, 0, 0, 0.7);
 }
 .closeBtn {
@@ -48,15 +48,16 @@
 }
 .gamePreparation {
   width: 100%;
-  height: 70%;
-  grid-row-start: 3;
-  grid-row-end: 4;
+  height: 100%;
+  grid-row-start: 4;
+  /* grid-row-end: 4; */
   grid-column-start: 2;
 }
 
 .startBtn {
-  height: 40%;
+  height: 70%;
   width: 40%;
+  margin-top: 1%;
   grid-row-start: 2;
   grid-column-start: 2;
   display: flex;
@@ -67,8 +68,8 @@
   background-color: #282c34;
 }
 .start {
-  font-size: 20px;
-  padding: 0.5rem;
+  height: 55%;
+  width: 80%;
   border: 2px solid rgba(0, 0, 0, 0.849);
   background-color: grey;
   text-align: center;
@@ -80,4 +81,27 @@
 }
 .start:active {
   opacity: 0.4;
+}
+
+.leaderBoardBtn {
+  height: 70%;
+  width: 40%;
+  margin-top: 1%;
+  grid-row-start: 3;
+  grid-column-start: 2;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  background-color: #282c34;
+}
+.leaderBoard {
+  height: 55%;
+  width: 80%;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  background-color: grey;
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
 }
