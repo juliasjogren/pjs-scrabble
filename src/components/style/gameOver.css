@@ -1,0 +1,72 @@
+.gameOver {
+  position: fixed;
+  z-index: 1;
+
+  width: 100vw;
+  height: 100vh;
+
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 1;
+
+  animation: fadeIn 500ms;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.gameOverTitleContainer,
+.gameOverPlayers {
+  height: 50vh;
+}
+
+.gameOverTitleContainer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.gameOverTitle {
+  font-size: 18vmin;
+  font-weight: bold;
+  color: gold;
+
+  animation: gameOver 500ms
+}
+@keyframes gameOver {
+  from {
+    opacity: 0;
+    transform:
+      scale3d(0, 0, 0)
+      rotate3d(0, 0, 1, -180deg)
+    ;
+  }
+  to {
+    opacity: 1;
+    transform:
+      scale3d(1, 1, 1)
+      rotate3d(0, 0, 0, 0deg)
+    ;
+  }
+}
+
+.gameOverPlayers {
+  color: lightgray;
+  font-weight: bold;
+
+  display: flex;
+  justify-content: center;
+}
+
+.gameOverPlayer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1.5rem;
+}
+
