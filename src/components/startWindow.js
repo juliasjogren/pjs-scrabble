@@ -21,7 +21,7 @@ const StartWindow = ({ onClose }) => {
         <div className="leaderBoardBtn" onClick={() => console.log("LeaderBoard")}>
           <div className="leaderBoard">Leaderboard</div>
         </div>
-        {showGamePreparation && <GamePreparation />}
+        {showGamePreparation && <GamePreparation onClose={onClose} />}
       </div>
     </div>
   );

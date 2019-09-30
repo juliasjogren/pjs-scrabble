@@ -48,9 +48,9 @@ input.textInput::placeholder {
   color: black;
   opacity: 1; /* Firefox */
 }
-
+/* 
 input:textinpus::placeholder:focus {
-}
+} */
 
 .colorSelect {
   justify-content: center;
@@ -166,8 +166,8 @@ input:textinpus::placeholder:focus {
   margin-bottom: 3%;
   border: 2px solid rgba(0, 0, 0, 0.849);
 }
-.playerTitle {
-}
+/* .playerTitle {
+} */
 
 .playerList {
   width: 100%;

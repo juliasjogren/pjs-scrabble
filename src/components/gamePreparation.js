@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import classNames from "classnames";
 
 import "./style/gamePreparation.css";
 
-const GamePreparation = () => {
+const GamePreparation = ({ onClose }) => {
   const [colors, setColors] = useState([
     { id: 1, name: "teal" },
     { id: 2, name: "purple" },
@@ -16,7 +16,7 @@ const GamePreparation = () => {
   const [players, setPlayers] = useState([]);
   const [playerName, setPlayerName] = useState("");
   const playerNameRef = useRef();
-  let inputText = "player" + (players.length + 1);
+  // let inputText = "player" + (players.length + 1);
 
   const colorClick = color => {
     console.log("color", color.id, color);
@@ -37,10 +37,10 @@ const GamePreparation = () => {
     if (playerColor && playerColor.picked) {
       return console.log("color allready picked");
     }
-    let id = players.length + 1;
     if (playerName === "") {
       return console.log("no name picked");
     }
+    let id = players.length + 1;
     setPlayers([...players, { id: id, name: playerName, color: playerColor.name }]);
 
     let col = newColors.find(color => color === selectedColor);
@@ -54,9 +54,9 @@ const GamePreparation = () => {
     console.log("players", players);
   };
 
-  const startGame = () => {
-    console.log("startgame");
-  };
+  // const startGame = () => {
+  //   console.log("startgame");
+  // };
 
   return (
     <div className="gamePreparation">
@@ -104,7 +104,7 @@ const GamePreparation = () => {
         </div>
       </div>
       <div className="startGameButton">
-        <div className="startGameBtn" onClick={startGame}>
+        <div className="startGameBtn" onClick={onClose}>
           Start Game
         </div>
       </div>
