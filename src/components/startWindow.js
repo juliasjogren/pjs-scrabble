@@ -1,25 +1,23 @@
 import React, { useState } from "react";
+import Button from "./button";
 // import classNames from "classnames";
 
 import "./style/startWindow.css";
 import GamePreparation from "./gamePreparation";
 
 const StartWindow = ({ onClose }) => {
-  const [showGamePreparation, setShowGamePreparation] = useState(false);
-  // let gamePreparationVisible = false;
+  const [showGamePreparation, setShowGamePreparation] = useState(true);
 
   return (
     <div className="startWindow">
       <div className="startMenu">
-        <div className="closeBtn" onClick={onClose}>
+        {/* <div className="closeBtn" onClick={onClose}>
           <div className="close">X</div>
-        </div>
-        <div className="header">Scrabble</div>
-        <div className="startBtn" onClick={() => setShowGamePreparation(true)}>
-          <div className="start">Start new game</div>
-        </div>
-        <div className="leaderBoardBtn" onClick={() => console.log("LeaderBoard")}>
-          <div className="leaderBoard">Leaderboard</div>
+        </div> */}
+        {/* <div className="header">Scrabble</div> */}
+        <div className="buttons">
+          <Button buttonText={"New game"} onClick={() => setShowGamePreparation(true)} />
+          <Button buttonText={"LeaderBoard"} onClick={() => console.log("LeaderBoard")} />
         </div>
         {showGamePreparation && <GamePreparation onClose={onClose} />}
       </div>

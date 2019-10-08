@@ -1,9 +1,9 @@
 .board {
   height: 92%;
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto;
-  grid-column-gap: 5%;
+  /* grid-template-columns: auto auto auto; */
+  /* grid-template-rows: auto auto; */
+  grid-column-gap: 3vh;
   justify-content: center;
   align-content: center;
   grid-row-gap: 3vh;
@@ -32,7 +32,7 @@
   cursor: pointer;
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 4vmin;
+  font-size: 3vmin;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,6 +50,7 @@
 }
 .cell.locked {
   position: relative;
+  background-color: #282c34;
 }
 .cell.locked .tile::after {
   content: "";
@@ -59,7 +60,8 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  /* border: 1px solid black; */
 }
 
 .playerCells {
@@ -67,14 +69,23 @@
   border: 2px solid rgba(0, 0, 0, 0.7);
   filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7));
   padding: 2%;
-  width: 60%;
+  width: 70%;
   grid-column: 2;
   grid-row: 2;
   display: grid;
-  grid-template-columns: repeat(7, 5vmin);
+  grid-template-columns: repeat(8, 6vmin);
   justify-self: center;
   justify-content: center;
   grid-column-gap: 0.5vh;
+}
+
+.toggleBtn {
+  background-color: grey;
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  text-align: center;
+  vertical-align: text-bottom;
+  padding-top: 10%;
 }
 
 .playerCell {
@@ -95,8 +106,8 @@
 }
 
 .tile {
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -104,45 +115,22 @@
 }
 
 .tilePoints {
-  color: gold;
   font-size: x-small;
   align-self: flex-end;
+  padding: 1px;
 }
 
-.stuffLeftToCell {
-  display: grid;
+.stuffLeftOfCell {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
   grid-column: 1;
+  justify-content: space-between;
 }
 
 .stuffRightOfCell {
   display: grid;
   grid-column: 3;
-  grid-template-rows: auto auto auto auto auto auto auto auto;
-}
-
-.executeButton {
-  display: flex;
-  grid-row: 8;
-  background: #282c34;
-  border: 2px solid rgba(0, 0, 0, 0.849);
-  cursor: pointer;
-  font-size: 3vmin;
-  height: 10vmin;
-  width: 17vmin;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-}
-.executeButton:hover {
-  background-color: lime;
-}
-
-.execute {
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: grey;
 }
 
 .activePlayer {
@@ -157,28 +145,4 @@
   align-self: center;
   grid-column: 1 / span 2;
   font-weight: bold;
-}
-
-.shuffleButton {
-  display: flex;
-  grid-row: 7;
-  background: #282c34;
-  border: 2px solid rgba(0, 0, 0, 0.849);
-  cursor: pointer;
-  font-size: 3vmin;
-  height: 10vmin;
-  width: 17vmin;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-}
-.shuffleButton:hover {
-  background-color: lime;
-}
-.shuffle {
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: grey;
 }

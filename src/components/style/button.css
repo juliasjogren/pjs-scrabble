@@ -1,0 +1,25 @@
+.buttonArea {
+  display: flex;
+  background: #282c34;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  cursor: pointer;
+  height: 9vmin;
+  width: 20vmin;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  /* padding: 5%; */
+}
+.buttonArea:hover {
+  background-color: lime;
+}
+
+.btn {
+  display: flex;
+  width: 80%;
+  padding: 5%;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(0, 0, 0, 0.849);
+  background-color: grey;
+}

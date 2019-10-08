@@ -12,9 +12,12 @@ const scoreBoard = ({ players }) => {
         return (
           <div
             className={classNames("playerInfo", {
-              active: player.id === active.id
+              active: active && player.id === active.id
             })}
             key={player.id}
+            style={{
+              backgroundColor: player.color
+            }}
           >
             <div className="playerName">{player.name}</div>
             <div className="playerPoints">Points: {player.points} </div>

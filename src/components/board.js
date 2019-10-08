@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import BoardCell from "./boardCell";
+import Button from "./button";
 import ScoreBoard from "./scoreBoard";
-import ActivePlayerInfo from "./activePlayerInfo";
+// import ActivePlayerInfo from "./activePlayerInfo";
 import { setup, execute } from "../game";
 import { moveTileToPlayerCells, cellClick, findCellsInRound } from "../round";
 import "./style/board.css";
 
-const Board = () => {
-  // console.log("in board");
+const Board = ({ players: inputPlayers, onGameOver }) => {
   const [boardCells, setBoardCells] = useState([]);
   const [playerCells, setPlayerCells] = useState([]);
   const [players, setPlayers] = useState([]);
   const [activePlayer, setActivePlayer] = useState(null);
   const [activeTile, setActiveTile] = useState(null);
   const [roundCells, setRoundCells] = useState([]);
-  // console.log(players, "players");
+  const [showPlayerTiles, setShowPlayerTiles] = useState(false);
+  const [toggle, setToggle] = useState("show");
 
   useEffect(() => {
-    const { boardCells, activePlayer, players } = setup();
+    console.log("Board mount", inputPlayers);
+    const { boardCells, activePlayer, players } = setup(inputPlayers);
     setBoardCells(boardCells);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
@@ -42,27 +44,45 @@ const Board = () => {
   };
 
   const executeClick = () => {
-    // console.log("round cells in board", roundCells);
-    // roundCells.forEach(cell => console.log(cell.tile.letter));
-    execute(roundCells);
+    if (roundCells.length === 0) {
+      return console.log("Enter a Word");
+    }
+    toggleLetters();
+    console.log("roundcell", roundCells);
+    execute(roundCells, onGameOver);
     const { boardCells, activePlayer } = setup();
     setBoardCells(boardCells);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
     setRoundCells([]);
-    // setActiveTile(null);
+  };
+
+  const toggleLetters = () => {
+    if (showPlayerTiles) {
+      setShowPlayerTiles(false);
+      setToggle("Show");
+    } else {
+      setShowPlayerTiles(true);
+      setToggle("Hide");
+    }
   };
 
   return (
     <div className="board">
       <div className="stuffLeftOfCell">
         <ScoreBoard players={players} />
+        <Button className="shuffleBtn" buttonText={"Shuffle"} />
       </div>
       <div className="cells">
         {boardCells.map(cell => (
           <BoardCell cell={cell} key={cell.index} onClick={() => clickOnCell(cell)}>
             {cell.tile && (
-              <div className="tile">
+              <div
+                className="tile"
+                style={{
+                  backgroundColor: cell.tile.color
+                }}
+              >
                 <div className="tileLetter">{cell.tile.letter}</div>
                 <div></div>
                 <div className="tilePoints">{cell.tile.points}</div>
@@ -73,6 +93,9 @@ const Board = () => {
       </div>
 
       <div className="playerCells">
+        <div className="toggleBtn" onClick={() => toggleLetters()}>
+          {toggle}
+        </div>
         {playerCells.map(playerCell => (
           <div
             className="playerCell"
@@ -80,18 +103,15 @@ const Board = () => {
             key={playerCell.index}
             onClick={() => playerCellClick(playerCell)}
           >
-            {playerCell.tile && <div className="tile">{playerCell.tile.letter}</div>}
+            {playerCell.tile && showPlayerTiles && (
+              <div className="tile">{playerCell.tile.letter}</div>
+            )}
           </div>
         ))}
       </div>
       <div className="stuffRightOfCell">
-        <ActivePlayerInfo activePlayer={activePlayer} />
-        <div className="executeButton" onClick={executeClick}>
-          <div className="execute">EXECUTE</div>
-        </div>
-        <div className="shuffleButton" onClick={console.log("shuffle")}>
-          <div className="shuffle">SHUFFLE</div>
-        </div>
+        {/* <ActivePlayerInfo activePlayer={activePlayer} /> */}
+        <Button className="button" buttonText={"Execute"} onClick={executeClick} />
       </div>
     </div>
   );

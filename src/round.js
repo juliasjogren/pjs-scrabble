@@ -9,6 +9,7 @@ import {
 let boardCells = [];
 let playerCells = [];
 let roundCells = [];
+let latestClickedCell = null;
 
 const findLockedNeighborsInRound = (lockedNeighbor, velocity, lockedNeighbors) => {
   if (!lockedNeighbors) {
@@ -87,7 +88,7 @@ const findUnlockedNeighborsInRound = (cellToCheck, velocity, neighbors) => {
   } else return neighbors;
 };
 
-const determineDirection = () => {
+export const determineDirection = () => {
   const activeCells = boardCells
     .filter(cell => !!cell.tile && !cell.locked)
     .sort((a, b) => a.index - b.index);
@@ -225,7 +226,7 @@ const makeClickedCellLockedNeighborsClickable = (lockedNeighbors, clickedCell) =
   makeNeighborsClickable(neighborsToClickable);
 };
 
-const makeMainWord = (roundCells = [], direction = "no", clickedCell) => {
+export const makeMainWord = (roundCells = [], direction = "no") => {
   let activeRoundCells = roundCells.filter(cell => !cell.locked);
   let leftNeighborsToClickedCell = [];
   let rightNeighborsToClickedCell = [];
@@ -233,11 +234,11 @@ const makeMainWord = (roundCells = [], direction = "no", clickedCell) => {
   let downNeighborsToClickedCell = [];
 
   if (direction === "horizontal") {
-    leftNeighborsToClickedCell = findUnlockedNeighborsInRound(clickedCell, -1);
-    rightNeighborsToClickedCell = findUnlockedNeighborsInRound(clickedCell, +1);
+    leftNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, -1);
+    rightNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, +1);
   } else if (direction === "vertical") {
-    upNeighborsToClickedCell = findUnlockedNeighborsInRound(clickedCell, -15);
-    downNeighborsToClickedCell = findUnlockedNeighborsInRound(clickedCell, +15);
+    upNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, -15);
+    downNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, +15);
   }
 
   let mainWord = leftNeighborsToClickedCell.concat(
@@ -245,7 +246,7 @@ const makeMainWord = (roundCells = [], direction = "no", clickedCell) => {
     upNeighborsToClickedCell,
     downNeighborsToClickedCell
   );
-  mainWord.push(clickedCell);
+  mainWord.push(latestClickedCell);
 
   activeRoundCells.forEach(cell => {
     let inMainWord = mainWord.find(n => n.index === cell.index);
@@ -279,6 +280,7 @@ export const moveTileToPlayerCells = (tile, newBoardCells, newPlayerCells) => {
 export function cellClick(clickedCell, activeTile, newBoardCells, newPlayerCells) {
   playerCells = newPlayerCells;
   boardCells = newBoardCells;
+  latestClickedCell = clickedCell;
 
   if (checkIfCellIsClickable(clickedCell) === "no") {
     return console.log("NOPE!!!");
@@ -304,7 +306,7 @@ export function cellClick(clickedCell, activeTile, newBoardCells, newPlayerCells
     let lockedNeighbors = clickedCellNeighbors.filter(cell => cell.locked);
     let roundCells = findCellsInRound(boardCells, clickedCell);
     let direction = determineDirection();
-    let mainWord = makeMainWord(roundCells, direction, clickedCell);
+    let mainWord = makeMainWord(roundCells, direction);
 
     makeRoundCellsNeighborsUnclickable(boardCells, roundCells);
 

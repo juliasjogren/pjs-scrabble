@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import classNames from "classnames";
+import Button from "./button";
 
 import "./style/gamePreparation.css";
 
@@ -13,13 +14,38 @@ const GamePreparation = ({ onClose }) => {
     { id: 6, name: "limegreen" }
   ]);
   const [selectedColor, setSelectedColor] = useState(null);
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState([
+    {
+      id: 2,
+      name: "Pontus",
+      color: "blue",
+      playerCells: [],
+      points: 0
+    },
+    {
+      id: 1,
+      name: "Julia",
+      color: "pink",
+      playerCells: [],
+      points: 0
+    },
+    {
+      id: 5,
+      name: "Belgarath",
+      color: "green",
+      playerCells: [],
+      points: 0
+    }
+  ]);
   const [playerName, setPlayerName] = useState("");
   const playerNameRef = useRef();
   // let inputText = "player" + (players.length + 1);
+  // export const findPlayers = () => {
+  //   return players;
+  // };
 
   const colorClick = color => {
-    console.log("color", color.id, color);
+    // console.log("color", color.id, color);
 
     if (selectedColor && selectedColor.selected === true) {
       selectedColor.selected = false;
@@ -41,7 +67,16 @@ const GamePreparation = ({ onClose }) => {
       return console.log("no name picked");
     }
     let id = players.length + 1;
-    setPlayers([...players, { id: id, name: playerName, color: playerColor.name }]);
+    setPlayers([
+      ...players,
+      {
+        id: id,
+        name: playerName,
+        color: playerColor.name,
+        playerCells: [],
+        points: 0
+      }
+    ]);
 
     let col = newColors.find(color => color === selectedColor);
     col.picked = true;
@@ -51,12 +86,16 @@ const GamePreparation = ({ onClose }) => {
     setPlayerName("");
 
     playerNameRef.current.focus();
-    console.log("players", players);
+    // console.log("players", players);
   };
 
   // const startGame = () => {
   //   console.log("startgame");
   // };
+
+  const startGame = () => {
+    onClose(players);
+  };
 
   return (
     <div className="gamePreparation">
@@ -83,8 +122,8 @@ const GamePreparation = ({ onClose }) => {
             </div>
           ))}
         </div>
-        <div className="addPlayerBtn" onClick={() => addPlayer()}>
-          <div className="pBtn">Add Player</div>
+        <div className="AddPlayerBtn">
+          <Button buttonText={"Add player"} onClick={() => addPlayer()} />
         </div>
       </div>
       <div className="players">
@@ -103,10 +142,8 @@ const GamePreparation = ({ onClose }) => {
           ))}
         </div>
       </div>
-      <div className="startGameButton">
-        <div className="startGameBtn" onClick={onClose}>
-          Start Game
-        </div>
+      <div className="startBtn">
+        <Button buttonText={"Start game"} onClick={startGame} />
       </div>
     </div>
   );
