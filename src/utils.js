@@ -91,8 +91,14 @@ const makeRandomTileFromAlfaAndDecreaseItsAmount = alfa => {
   return { letter: letter.letter, id: letterCount, points: letter.points };
 };
 
+export const makeAllUnlockedCellsClickable = BoardCells => {
+  let unlockedCells = BoardCells.filter(cell => !cell.locked);
+  // console.log(unlockedCells);
+  makeNeighborsClickable(unlockedCells);
+};
+
 export function createBag() {
-  console.log("in create bag");
+  // console.log("in create bag");
   const gameAlfa = makeAlfa();
   const tilesInBag = gameAlfa.reduce((total, letter) => {
     return total + letter.amount;

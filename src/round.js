@@ -1,10 +1,4 @@
-import {
-  findNeighbors,
-  makeNeighborsUnclickable,
-  makeNeighborsClickable,
-  makeLockedNeighborsUnclickable,
-  makeRoundCellsNeighborsUnclickable
-} from "./utils";
+import { findNeighbors, makeNeighborsClickable } from "./utils";
 
 let boardCells = [];
 let playerCells = [];
@@ -27,16 +21,6 @@ const findLockedNeighborsInRound = (lockedNeighbor, velocity, lockedNeighbors) =
 export function checkIfCellIsClickable(clickedCell) {
   if (clickedCell.locked || clickedCell.clickable === false) {
     return "no";
-  }
-}
-
-export function manageCellNeighbors(cell, action) {
-  let cellNeighbors = findNeighbors(boardCells, cell);
-
-  if (action === "unclickable") {
-    makeNeighborsUnclickable(cellNeighbors);
-  } else if (action === "clickable") {
-    makeNeighborsClickable(cellNeighbors);
   }
 }
 
@@ -69,8 +53,8 @@ export const findCellsInRound = (newBoardCells, clickedCell) => {
 
   let newRoundCells = roundCells.filter(cell => cell.tile);
 
-  // console.log("roundCells", roundCells);
-  // roundCells.forEach(cell => console.log(cell.tile.letter));
+  // console.log("roundCells in round", newRoundCells);
+  // newRoundCells.forEach(cell => console.log(cell.tile.letter));
 
   return newRoundCells;
 };
@@ -83,7 +67,24 @@ const findUnlockedNeighborsInRound = (cellToCheck, velocity, neighbors) => {
   let n = boardCells.find(cell => cellToCheck.index + velocity === cell.index);
 
   if (n.tile) {
-    neighbors.push(n);
+    if (n.locked) {
+      neighbors.push(n);
+    }
+    return findUnlockedNeighborsInRound(n, velocity, neighbors);
+  } else return neighbors;
+};
+
+const findLesserNeighborsInRound = (cellToCheck, velocity, neighbors) => {
+  if (!neighbors) {
+    neighbors = [];
+  }
+
+  let n = boardCells.find(cell => cellToCheck.index - velocity === cell.index);
+
+  if (n.tile) {
+    if (n.locked) {
+      neighbors.push(n);
+    }
     return findUnlockedNeighborsInRound(n, velocity, neighbors);
   } else return neighbors;
 };
@@ -103,163 +104,34 @@ export const determineDirection = () => {
   else return "vertical";
 };
 
-const makeClickedCellEdgesClickable = (neighbors, clickedCell) => {
-  let lockedNeighbors = neighbors.filter(cell => cell.locked);
-  let unlockedNeighbors = neighbors.filter(cell => !cell.locked);
-  let neighborsToClickable = [];
-  let cellNeighbors = [];
-
-  unlockedNeighbors.forEach(cell => {
-    neighborsToClickable.push(cell);
-  });
-
-  lockedNeighbors.forEach(cell => {
-    // console.log(lockedNeighbors);
-    // console.log(cell.tile.letter);
-    if (cell.index === clickedCell.index - 1) {
-      cellNeighbors = findLockedNeighborsInRound(cell, -1);
-      if (cellNeighbors.length > 0) {
-        let last = cellNeighbors.pop();
-        // console.log("last", last.tile.letter);
-        let lastCellNeighbors = findNeighbors(boardCells, last);
-        let cellToClick = lastCellNeighbors.find(cell => cell.index === last.index - 1);
-        neighborsToClickable.push(cellToClick);
-      } else {
-        let lastCellNeighbors = findNeighbors(boardCells, cell);
-        let cellToClick = lastCellNeighbors.find(neighbor => neighbor.index === cell.index - 1);
-        neighborsToClickable.push(cellToClick);
-      }
-    }
-    if (cell.index === clickedCell.index + 1) {
-      cellNeighbors = findLockedNeighborsInRound(cell, +1);
-      if (cellNeighbors.length > 0) {
-        let last = cellNeighbors.pop();
-        // console.log("last", last.tile.letter);
-        let lastCellNeighbors = findNeighbors(boardCells, last);
-        let cellToClick = lastCellNeighbors.find(cell => cell.index === last.index + 1);
-        neighborsToClickable.push(cellToClick);
-      } else {
-        let lastCellNeighbors = findNeighbors(boardCells, cell);
-        let cellToClick = lastCellNeighbors.find(neighbor => neighbor.index === cell.index + 1);
-        neighborsToClickable.push(cellToClick);
-      }
-    }
-    if (cell.index === clickedCell.index - 15) {
-      cellNeighbors = findLockedNeighborsInRound(cell, -15);
-      if (cellNeighbors.length > 0) {
-        let last = cellNeighbors.pop();
-        // console.log("last", last.tile.letter);
-        let lastCellNeighbors = findNeighbors(boardCells, last);
-        let cellToClick = lastCellNeighbors.find(cell => cell.index === last.index - 15);
-        neighborsToClickable.push(cellToClick);
-      } else {
-        let lastCellNeighbors = findNeighbors(boardCells, cell);
-        let cellToClick = lastCellNeighbors.find(neighbor => neighbor.index === cell.index - 15);
-        neighborsToClickable.push(cellToClick);
-      }
-    }
-    if (cell.index === clickedCell.index + 15) {
-      cellNeighbors = findLockedNeighborsInRound(cell, +15);
-      if (cellNeighbors.length > 0) {
-        let last = cellNeighbors.pop();
-        // console.log("last", last.tile.letter);
-        let lastCellNeighbors = findNeighbors(boardCells, last);
-        let cellToClick = lastCellNeighbors.find(cell => cell.index === last.index + 15);
-        neighborsToClickable.push(cellToClick);
-      } else {
-        let lastCellNeighbors = findNeighbors(boardCells, cell);
-        let cellToClick = lastCellNeighbors.find(neighbor => neighbor.index === cell.index + 15);
-        neighborsToClickable.push(cellToClick);
-      }
-    }
-  });
-  makeNeighborsClickable(neighborsToClickable);
-};
-
-const makeMainWordEdgesClickable = (direction, mainWord) => {
-  let first = mainWord.shift();
-  let last = mainWord.pop();
-  let firstNeighbors = findNeighbors(boardCells, first);
-  let lastNeighbors = findNeighbors(boardCells, last);
-
-  let cellsToClickable = [];
+export const makeMainWord = (roundCells, direction) => {
+  let unlockedRoundCells = roundCells.filter(cell => !cell.locked);
+  let cellToCheck = unlockedRoundCells[0];
+  let mainWord = [];
+  console.log("cell to check", cellToCheck);
+  mainWord.push(cellToCheck);
+  let velocity = 0;
   if (direction === "horizontal") {
-    let firstNeighbor = firstNeighbors.find(cell => cell.index === first.index - 1);
-    let lastNeighbor = lastNeighbors.find(cell => cell.index === last.index + 1);
-    cellsToClickable.push(firstNeighbor, lastNeighbor);
-  } else if (direction === "vertical") {
-    let firstNeighbor = firstNeighbors.find(cell => cell.index === first.index - 15);
-    let lastNeighbor = lastNeighbors.find(cell => cell.index === last.index + 15);
-    cellsToClickable.push(firstNeighbor, lastNeighbor);
+    velocity = 1;
   }
-  makeNeighborsClickable(cellsToClickable);
-};
-
-const makeClickedCellLockedNeighborsClickable = (lockedNeighbors, clickedCell) => {
-  let neighborsToClickable = [];
-
-  lockedNeighbors.forEach(cell => {
-    if (cell.index + 1 === clickedCell.index) {
-      // console.log("left Neighbor");
-      let cellNeighbor = boardCells.find(neighbor => neighbor.index === cell.index - 1);
-      neighborsToClickable.push(cellNeighbor);
-      // let cellNeighbors = findLockedNeighborsInRound(cellNeighbor, -1)
-      // cellNeighbors.forEach(neighbor => neighborsToClickable.push(neighbor))
-    }
-    if (cell.index - 1 === clickedCell.index) {
-      // console.log("right Neighbor");
-      let cellNeighbor = boardCells.find(neighbor => neighbor.index === cell.index + 1);
-      neighborsToClickable.push(cellNeighbor);
-    }
-    if (cell.index + 15 === clickedCell.index) {
-      // console.log("up Neighbor");
-      let cellNeighbor = boardCells.find(neighbor => neighbor.index === cell.index - 15);
-      neighborsToClickable.push(cellNeighbor);
-    }
-    if (cell.index - 15 === clickedCell.index) {
-      // console.log("down Neighbor");
-      let cellNeighbor = boardCells.find(neighbor => neighbor.index === cell.index + 15);
-      neighborsToClickable.push(cellNeighbor);
-    }
-  });
-
-  makeNeighborsClickable(neighborsToClickable);
-};
-
-export const makeMainWord = (roundCells = [], direction = "no") => {
-  let activeRoundCells = roundCells.filter(cell => !cell.locked);
-  let leftNeighborsToClickedCell = [];
-  let rightNeighborsToClickedCell = [];
-  let upNeighborsToClickedCell = [];
-  let downNeighborsToClickedCell = [];
-
-  if (direction === "horizontal") {
-    leftNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, -1);
-    rightNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, +1);
-  } else if (direction === "vertical") {
-    upNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, -15);
-    downNeighborsToClickedCell = findUnlockedNeighborsInRound(latestClickedCell, +15);
+  if (direction === "vertical") {
+    velocity = 15;
+  }
+  if (direction === "no") {
+    return mainWord;
+  }
+  // console.log("celocity", velocity);
+  if (velocity !== 0) {
+    let lesserRoundCells = findLesserNeighborsInRound(cellToCheck, velocity);
+    let higherRoundCells = findUnlockedNeighborsInRound(cellToCheck, velocity);
+    mainWord = lesserRoundCells.concat(higherRoundCells, unlockedRoundCells);
   }
 
-  let mainWord = leftNeighborsToClickedCell.concat(
-    rightNeighborsToClickedCell,
-    upNeighborsToClickedCell,
-    downNeighborsToClickedCell
-  );
-  mainWord.push(latestClickedCell);
+  console.log("mainWord in make mainword", mainWord);
+  mainWord.forEach(cell => console.log(cell.tile.letter));
 
-  activeRoundCells.forEach(cell => {
-    let inMainWord = mainWord.find(n => n.index === cell.index);
-    if (!inMainWord) {
-      mainWord.push(cell);
-    }
-  });
-  mainWord.sort((a, b) => a.index - b.index);
-
-  // console.log("main word");
-  // mainWord.forEach(cell => console.log(cell.tile.letter));
-
-  return mainWord;
+  let sortedMainWord = mainWord.sort((a, b) => a.index - b.index);
+  return sortedMainWord;
 };
 
 export const moveTileToPlayerCells = (tile, newBoardCells, newPlayerCells) => {
@@ -282,17 +154,15 @@ export function cellClick(clickedCell, activeTile, newBoardCells, newPlayerCells
   boardCells = newBoardCells;
   latestClickedCell = clickedCell;
 
-  if (checkIfCellIsClickable(clickedCell) === "no") {
-    return console.log("NOPE!!!");
-  }
-
-  // let newBoardCells = boardCells
-
   // starting point
   if (clickedCell.tile) {
-    manageCellNeighbors(clickedCell, "unclickable");
+    console.log("cell has tile");
     moveTileToPlayerCells(clickedCell.tile, boardCells, playerCells);
+    let newRoundCells = findCellsInRound(boardCells, clickedCell);
+    roundCells = newRoundCells.filter(cell => cell.tile);
     clickedCell.tile = null;
+    // console.log("roundcells in cell has tile");
+    // roundCells.forEach(cell => console.log(cell, cell.tile));
   }
   // console.log("clicked cell", clickedCell);
 
@@ -300,22 +170,11 @@ export function cellClick(clickedCell, activeTile, newBoardCells, newPlayerCells
     clickedCell.tile = activeTile;
     let newActiveCells = boardCells.filter(cell => !!cell.tile && !cell.locked);
 
-    makeLockedNeighborsUnclickable(boardCells);
-
     let clickedCellNeighbors = findNeighbors(boardCells, clickedCell);
     let lockedNeighbors = clickedCellNeighbors.filter(cell => cell.locked);
     let roundCells = findCellsInRound(boardCells, clickedCell);
     let direction = determineDirection();
-    let mainWord = makeMainWord(roundCells, direction);
-
-    makeRoundCellsNeighborsUnclickable(boardCells, roundCells);
-
-    if (newActiveCells.length > 1) {
-      makeMainWordEdgesClickable(direction, mainWord);
-    } else {
-      makeClickedCellEdgesClickable(clickedCellNeighbors, clickedCell);
-      makeClickedCellLockedNeighborsClickable(lockedNeighbors, clickedCell);
-    }
+    // let mainWord = makeMainWord(roundCells, direction);
 
     playerCells = playerCells.map(cell => {
       if (cell.tile && cell.tile.id === activeTile.id) cell.tile = null;

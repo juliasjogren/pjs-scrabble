@@ -21,10 +21,10 @@ import "./style/gameOver.css";
 // ];
 
 const GameOver = props => {
-  console.log("props", props);
+  // console.log("props", props);
   let onClick = props.onClick;
   let players = props.players;
-  console.log("players", players);
+  // console.log("players", players);
   let winner = players.shift();
 
   return (

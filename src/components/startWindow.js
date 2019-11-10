@@ -6,7 +6,15 @@ import "./style/startWindow.css";
 import GamePreparation from "./gamePreparation";
 
 const StartWindow = ({ onClose }) => {
-  const [showGamePreparation, setShowGamePreparation] = useState(true);
+  const [showGamePreparation, setShowGamePreparation] = useState(false);
+
+  const toggleGamePreparation = () => {
+    if (showGamePreparation === true) {
+      setShowGamePreparation(false);
+    } else {
+      setShowGamePreparation(true);
+    }
+  };
 
   return (
     <div className="startWindow">
@@ -16,8 +24,8 @@ const StartWindow = ({ onClose }) => {
         </div> */}
         {/* <div className="header">Scrabble</div> */}
         <div className="buttons">
-          <Button buttonText={"New game"} onClick={() => setShowGamePreparation(true)} />
-          <Button buttonText={"LeaderBoard"} onClick={() => console.log("LeaderBoard")} />
+          <Button buttonText={"New game"} onClick={() => toggleGamePreparation()} />
+          {/* <Button buttonText={"LeaderBoard"} onClick={() => console.log("LeaderBoard")} /> */}
         </div>
         {showGamePreparation && <GamePreparation onClose={onClose} />}
       </div>

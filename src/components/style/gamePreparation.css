@@ -19,7 +19,7 @@
 
 .playerNameInput {
   height: 80%;
-  width: 90%;
+  width: 80%;
   grid-column: 1;
   display: flex;
   justify-content: center;
@@ -134,7 +134,8 @@ input.textInput::placeholder {
 }
 
 .AddPlayerBtn {
-  widows: 100%;
+  /* widows: 100%; */
+  width: 90%;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -13,7 +13,8 @@
 .startMenu {
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 60%;
+  /* width: 70%; */
   height: 100%;
 }
 .closeBtn {
@@ -50,8 +51,8 @@
   flex-direction: column;
   height: 30%;
   justify-content: space-evenly;
-  align-content: center;
-  padding-right: 40%;
+  align-self: center;
+  /* padding-right: 40%; */
 }
 .gamePreparation {
   width: 100%;

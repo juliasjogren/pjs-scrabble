@@ -20,11 +20,11 @@ let players = [];
 let activePlayer = null;
 
 function gamifyPlayers(inputPlayers) {
-  console.log("inputplayers", inputPlayers);
+  // console.log("inputplayers", inputPlayers);
   activePlayer = inputPlayers[0];
   return inputPlayers.map(player => {
     player.playerCells = createPlayerCells(bag);
-    console.log("playercells", player.playerCells);
+    // console.log("playercells", player.playerCells);
     player.playerCells.forEach(cell => {
       cell.tile.color = player.color;
     });
@@ -34,11 +34,13 @@ function gamifyPlayers(inputPlayers) {
 }
 
 export const setup = inputPlayers => {
-  console.log("im in setup");
+  // console.log("im in setup");
   let game = {};
-  boardCells = createBoardCells();
+  if (boardCells.length === 0) {
+    boardCells = createBoardCells();
+  }
   bag = createBag();
-  console.log("bag", bag);
+  // console.log("bag", bag);
   game.boardCells = boardCells;
   game.bag = bag;
 
@@ -64,12 +66,13 @@ const lockWord = () => {
 const drawTiles = () => {
   if (bag.length === 0) return;
   const numberOfCellsWithoutTiles = activePlayer.playerCells.filter(cell => !cell.tile).length;
+
   if (numberOfCellsWithoutTiles === 0) return;
 
   let newTiles = drawTilesFromBag(bag, numberOfCellsWithoutTiles);
   newTiles.forEach(tile => (tile.color = activePlayer.color));
-  console.log("new tiles", newTiles);
-  newTiles.forEach(tile => console.log(tile.color));
+  // console.log("new tiles", newTiles);
+  // newTiles.forEach(tile => console.log(tile.color));
 
   activePlayer.playerCells = activePlayer.playerCells.map(cell => {
     if (!cell.tile) {
@@ -89,6 +92,7 @@ const changeActivePlayer = () => {
     activePlayer.active = true;
   } else {
     activePlayer = players.find(player => player.id === activePlayer.id + 1);
+    // console.log("active player", activePlayer);
     activePlayer.active = true;
   }
 };
@@ -109,7 +113,9 @@ const findNeighborsInWord = (notMainWord, cellToCheck, velocity, neighbors) => {
 const findAllWords = (roundCells, direction) => {
   let words = [];
   let mainWord = makeMainWord(roundCells, direction);
+  // console.log("mainword in findallwords", mainWord);
   words.push(mainWord);
+  // console.log("roundcells in findallwords", roundCells);
 
   let notMainWord = roundCells.filter(cell => {
     return !mainWord.includes(cell);
@@ -144,7 +150,7 @@ const findAllWords = (roundCells, direction) => {
 
 const findWordsInRoundCells = roundCells => {
   let direction = determineDirection();
-  console.log("findWordsInRoundCells direction", direction);
+  // console.log("findWordsInRoundCells direction", direction);
   let sortedRoundCells = roundCells.sort((a, b) => {
     return a.id - b.id;
   });
@@ -152,13 +158,32 @@ const findWordsInRoundCells = roundCells => {
   return words;
 };
 
+export const shuffleTiles = playerCells => {
+  let tilesToChange = playerCells.filter(cell => cell.tile.shuffleSelected);
+
+  tilesToChange.forEach(cell => {
+    bag.push(cell.tile);
+    cell.tile = null;
+  });
+  let numOfTiles = tilesToChange.length;
+
+  let newTiles = drawTilesFromBag(bag, numOfTiles);
+  newTiles.forEach(tile => (tile.color = activePlayer.color));
+
+  activePlayer.playerCells = activePlayer.playerCells.map(cell => {
+    if (!cell.tile) {
+      cell.tile = newTiles.pop();
+    }
+
+    return cell;
+  });
+  activePlayer.active = false;
+  changeActivePlayer();
+  return boardCells;
+};
+
 export function execute(roundCells, onGameOver) {
   let words = findWordsInRoundCells(roundCells);
-  words.forEach(word => {
-    console.log("word");
-    word.forEach(cell => console.log(cell.tile.letter));
-  });
-
   let wordsApproved = true;
   console.log("execute");
 
@@ -170,13 +195,14 @@ export function execute(roundCells, onGameOver) {
     activePlayer.points += wordPoints;
 
     let noTilesLeft = activePlayer.playerCells.find(cell => cell.tile);
-    // if (!noTilesLeft) {
-    if (noTilesLeft) {
+    if (!noTilesLeft) {
+      // if (noTilesLeft) {
       const sortedPlayers = players.sort((a, b) => b.points - a.points);
       onGameOver(sortedPlayers);
     } else {
       activePlayer.active = false;
       changeActivePlayer();
+      return boardCells;
     }
   } else {
     return console.log("Word not approved");

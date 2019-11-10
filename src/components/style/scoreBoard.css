@@ -29,10 +29,6 @@
   /* background-color: grey; */
 }
 
-.playerName:active {
-  border: 10px solid lime;
-}
-
 .playerPoints {
   text-align: center;
   letter-spacing: 1px;

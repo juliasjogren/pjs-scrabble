@@ -1,13 +1,23 @@
 import React from "react";
 import "./style/button.css";
-// import classNames from "classnames";
+import classNames from "classnames";
 
 const button = props => {
   // console.log(props);
+  let miniButton = props.miniButton;
+  let shufflebtnSelect = props.shufflebtnSelect;
   let buttonText = props.buttonText;
   let click = props.onClick;
+  let disabled = props.disabled;
   return (
-    <div className="buttonArea" onClick={click}>
+    <div
+      className={classNames("buttonArea", {
+        miniButton: miniButton && miniButton === true,
+        disabled: disabled && disabled === true,
+        shuffleActive: shufflebtnSelect && shufflebtnSelect === true
+      })}
+      onClick={click}
+    >
       {<div className="btn">{buttonText}</div>}
     </div>
   );
