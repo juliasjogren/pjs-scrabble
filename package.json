@@ -9,7 +9,7 @@
     "react-scripts": "3.0.1"
   },
   "scripts": {
-    "homepage": "http://juliaSjogren.github.io/pjs-scrabble",
+    "homepage": "https://juliasjogren.github.io/pjs-scrabble",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
