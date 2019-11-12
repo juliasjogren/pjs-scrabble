@@ -1,432 +1,287 @@
 import React, { useState, useEffect } from "react";
-
 import BoardCell from "./boardCell";
-
+import Button from "./button";
+import ScoreBoard from "./scoreBoard";
+// import ActivePlayerInfo from "./activePlayerInfo";
+import { setup, execute, shuffleTiles } from "../game";
 import {
-  findNeighbors,
-  lockTilesWithLetter,
-  makeNeighborsClickable,
-  makeNeighborsUnclickable,
+  moveTileToPlayerCells,
+  cellClick,
+  findCellsInRound,
   determineDirection,
-  makeRoundCellsNeighborsUnclickable,
-  makeMainWordEdgesClickable,
-  // getPoints,
-  // executePoints,
-  makeLockedNeighborsUnclickable,
-  // findNeighborsDirection,
-  // findLockedNeighborsInRound,
-  shuffleTiles
-} from "../utils";
-
+  makeMainWord
+} from "../round";
+import { findNeighbors, makeAllUnlockedCellsClickable } from "../utils";
 import "./style/board.css";
-import { isRegExp } from "util";
+import classNames from "classnames";
 
-function createBoardCells() {
-  function BoardCell(index) {
-    let clickableTile = null;
-    if (index === 112) {
-      clickableTile = true;
-    } else clickableTile = false;
-    return {
-      index,
-      clickable: clickableTile,
-      tile: null
-    };
-  }
+const ShuffleIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    xmlns="http://www.w3.org/2000/svg"
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+  >
+    <path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm2.085 14h-9v2h9v3l5-4-5-4v3zm-4-6v-3l-5 4 5 4v-3h9v-2h-9z" />
+  </svg>
+);
+const ExecuteIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M3 22v-20l18 10-18 10z" />
+  </svg>
+);
 
-  return Array(225)
-    .fill()
-    .map((_, i) => new BoardCell(i));
-}
+const ExitIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" />
+  </svg>
+);
 
-// function createActiveTiles() {
-//   return boardCells.filter(tile => !!tile.letter && !tile.locked);
-// }
-
-const Board = ({ startingBag }) => {
-  const [bag, setBag] = useState(startingBag);
-  const [boardCells, setBoardCells] = useState(createBoardCells);
-  const [playerCells, setPlayerCells] = useState(createPlayerCells);
-  const [activeTiles, setActiveTiles] = useState();
+const Board = ({ players: inputPlayers, onGameOver }) => {
+  const [boardCells, setBoardCells] = useState([]);
+  const [playerCells, setPlayerCells] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [activePlayer, setActivePlayer] = useState(null);
   const [activeTile, setActiveTile] = useState(null);
   const [roundCells, setRoundCells] = useState([]);
+  const [showPlayerTiles, setShowPlayerTiles] = useState(false);
+  const [toggle, setToggle] = useState("show");
+  const [executeBtnDisabled, setExecuteBtnDisabled] = useState(false);
+  const [shuffleTilesActive, setShuffleTilesActive] = useState(false);
+  // const [clickedCell, setClickedCell] = useState(null);
 
   useEffect(() => {
-    // console.log(
-    //   "activeTiles",
-    //   boardCells
-    //     .filter(cell => !!cell.tile && !cell.locked)
-    //     .sort((a, b) => a.index - b.index)
-    //     .map(cell => cell.tile.letter)
-    //     .join("")
-    // );
-    setActiveTiles(boardCells.filter(tile => !!tile.letter && !tile.locked));
-  }, [boardCells]);
+    console.log("Board mount", inputPlayers);
+    const { boardCells, activePlayer, players } = setup(inputPlayers);
+    setBoardCells(boardCells);
+    setPlayerCells(activePlayer.playerCells);
+    setActivePlayer(activePlayer);
+    setPlayers(players);
+  }, []);
 
-  function drawTilesFromBag(numberOfTiles) {
-    if (bag.length === 0) return console.log("Game Over!") || {};
-    const newBag = [...bag];
-
-    const tiles = [];
-
-    for (let i = 0; i < numberOfTiles; i++) {
-      tiles.push(newBag.shift());
+  const clickOnCell = cell => {
+    if (cell.locked || cell.clickable === false) {
+      return console.log("You cant click on this cell");
     }
+    console.log("First", executeBtnDisabled);
+    cellClick(cell, activeTile, boardCells, playerCells);
+    setActiveTile(null);
+    let newRoundCells = findCellsInRound(boardCells, cell);
+    let filterdRoundCells = newRoundCells.filter(cell => cell.tile);
+    setRoundCells(filterdRoundCells);
+    // CheckifValidWord(cell);
+    makeAllUnlockedCellsClickable(boardCells);
+    // console.log("round cells in clicked cells", roundCells);
+  };
 
-    setBag(newBag);
-    return tiles;
-  }
+  useEffect(() => {
+    if (roundCells && roundCells.length) {
+      CheckifValidWord();
+    }
+  }, [roundCells]);
 
-  function createPlayerCells() {
-    const tiles = drawTilesFromBag(7);
+  const CheckifValidWord = clickedCell => {
+    let direction = determineDirection();
+    let mainWord = makeMainWord(roundCells, direction);
+    let cellInLine = [];
 
-    return Array(7)
-      .fill()
-      .map((_, i) => ({
-        index: i,
-        tile: tiles.pop()
-      }));
-  }
+    for (let i = 0; i < mainWord.length; i++) {
+      let cell = mainWord[i];
+      let lastCell = mainWord[mainWord.length - 1];
+      let velocity = 0;
 
-  const moveTileToPlayerCells = tile => {
-    let found = false;
-    setPlayerCells(
-      playerCells.map(playerCell => {
-        if (!found && !playerCell.tile) {
-          playerCell.tile = tile;
-          found = true;
+      let firstGameCell = boardCells.find(cell => cell.index === 112);
+      let lockedRoundCells = roundCells.filter(cell => cell.locked);
+      let firstInRound = roundCells.includes(firstGameCell);
+      let noLockedcellsInRound = lockedRoundCells.length < 1;
+
+      // console.log("first in rouuund", firstInRound);
+      // if(roundCells.includes(firstGameCell) ||)
+
+      if (noLockedcellsInRound) {
+        if (firstInRound === false) {
+          return setExecuteBtnDisabled(true);
         }
-
-        return playerCell;
-      })
-    );
-  };
-
-  const findNeighborsDirection = (list, clickedCell) => {
-    let lockedNeighborsInRound = [];
-    let neighbors = [];
-
-    for (let i = 0; i < list.length; i++) {
-      if (list[i].index + 1 === clickedCell.index) {
-        neighbors = findLockedNeighborsInRound(list[i], -1);
-      }
-      if (list[i].index - 1 === clickedCell.index) {
-        neighbors = findLockedNeighborsInRound(list[i], 1);
-      }
-      if (list[i].index - 15 === clickedCell.index) {
-        neighbors = findLockedNeighborsInRound(list[i], 15);
-      }
-      if (list[i].index + 15 === clickedCell.index) {
-        neighbors = findLockedNeighborsInRound(list[i], -15);
       }
 
-      neighbors.forEach(cell => {
-        lockedNeighborsInRound.push(cell);
-      });
-    }
-    // console.log(lockedNeighborsInRound, "locked neighbors in line");
-
-    return lockedNeighborsInRound;
-  };
-
-  const findCellsInRound = (newBoardCells, clickedCell) => {
-    // let newBoardCells = [...boardCells];
-    let newActiveCells = boardCells.filter(cell => !!cell.tile && !cell.locked);
-
-    let neighbors = findNeighbors(newBoardCells, clickedCell);
-    let lockedNeighbors = neighbors.filter(cell => cell.locked);
-
-    let moreLockedNeighbors = findNeighborsDirection(lockedNeighbors, clickedCell);
-
-    let newCellsInRound = [...roundCells, ...lockedNeighbors, ...moreLockedNeighbors, clickedCell];
-
-    setRoundCells(newCellsInRound);
-
-    return newCellsInRound;
-  };
-
-  const findLockedNeighborsInRound = (lockedNeighbor, velocity, lockedNeighbors) => {
-    let newBoardCells = [...boardCells];
-
-    if (!lockedNeighbors) {
-      lockedNeighbors = [];
-    }
-
-    let n = newBoardCells.find(cell => lockedNeighbor.index + velocity === cell.index);
-
-    if (n.locked) {
-      lockedNeighbors.push(n);
-      return findLockedNeighborsInRound(n, velocity, lockedNeighbors);
-    } else return lockedNeighbors;
-  };
-
-  const findMainWordClickableNeighbors = (clickedCell, direction) => {
-    let newBoardCells = [...boardCells];
-    let newActiveCells = newBoardCells.filter(cell => !!cell.tile && !cell.locked);
-    let sortedActiveCells = newActiveCells.sort((a, b) => a.index - b.index);
-    let lockedNeighbors = [];
-
-    sortedActiveCells.forEach(cell => {
-      let neighbors = findNeighbors(newBoardCells, cell);
-      let locked = neighbors.filter(cell => cell.locked);
-      locked.forEach(cell => lockedNeighbors.push(cell));
-    });
-
-    let lockedRoundCells = [];
-    let lastActive = sortedActiveCells.pop();
-
-    if (direction === "horizontal") {
-      let leftLockedNeighbor = lockedNeighbors.find(
-        cell => cell.index === sortedActiveCells[0].index - 1
-      );
-      let rightLockedNeighbor = lockedNeighbors.find(cell => cell.index === lastActive.index + 1);
-
-      if (leftLockedNeighbor) {
-        let leftNeighbors = findLockedNeighborsInRound(leftLockedNeighbor, -1);
-        leftNeighbors.forEach(cell => lockedRoundCells.push(cell));
-        lockedRoundCells.push(leftLockedNeighbor);
+      if (direction === "horizontal") {
+        velocity = 1;
       }
-      if (rightLockedNeighbor) {
-        let rightNeighbors = findLockedNeighborsInRound(rightLockedNeighbor, 1);
-        rightNeighbors.forEach(cell => lockedRoundCells.push(cell));
-        lockedRoundCells.push(rightLockedNeighbor);
+      if (direction === "vertical") {
+        velocity = 15;
       }
-    } else if (direction === "vertical") {
-      let upLockedNeighbor = lockedNeighbors.find(
-        cell => cell.index === sortedActiveCells[0].index - 15
-      );
-      let downLockedNeighbor = lockedNeighbors.find(cell => cell.index === lastActive.index + 15);
+      if (direction === "no") {
+        console.log("only one tile");
+      }
+      let nextCell = mainWord[i + 1];
 
-      if (upLockedNeighbor) {
-        let upNeighbors = findLockedNeighborsInRound(upLockedNeighbor, -15);
-        upNeighbors.forEach(cell => lockedRoundCells.push(cell));
-        lockedRoundCells.push(upLockedNeighbor);
+      if (nextCell && cell.index + velocity === nextCell.index) {
+        cellInLine.push(cell);
       }
-      if (downLockedNeighbor) {
-        let downNeighbors = findLockedNeighborsInRound(downLockedNeighbor, 15);
-        downNeighbors.forEach(cell => lockedRoundCells.push(cell));
-        lockedRoundCells.push(downLockedNeighbor);
+
+      if (cell === lastCell) {
+        console.log("hello");
+        cellInLine.push(cell);
       }
     }
 
-    console.log("lockedd round cells");
-    lockedRoundCells.forEach(cell => console.log(cell.index, cell.tile.letter));
-    let mainWord = newActiveCells.concat(lockedRoundCells);
-    mainWord.push(clickedCell);
-    let sortedMainWord = mainWord.sort((a, b) => a.index - b.index);
-    // console.log("sorted main word");
-    // sortedMainWord.forEach(cell => console.log(cell.index, cell.tile.letter));
-
-    return sortedMainWord;
+    // console.log("same length", cellInLine.length === mainWord.length);
+    // const sameLength = cellInLine.length === mainWord.length;
+    // setExecuteBtnDisabled(sameLength);
+    if (cellInLine.length === mainWord.length) {
+      setExecuteBtnDisabled(false);
+    } else {
+      setExecuteBtnDisabled(true);
+    }
   };
 
-  const makeMainWordEdgesClickable = (mainWord, direction) => {
-    let newBoardCells = [...boardCells];
-    let firstRoundCell = mainWord.shift();
-    let lastRoundCell = mainWord.pop();
-    console.log("first round cell", firstRoundCell.index, firstRoundCell.tile.letter);
-    console.log("last round cell", lastRoundCell.index, lastRoundCell.tile.letter);
-    let neighbors = [];
-    let firstNeighbors = findNeighbors(newBoardCells, firstRoundCell);
-    let lastNeighbors = findNeighbors(newBoardCells, lastRoundCell);
-
-    if (direction === "horizontal") {
-      let first = firstNeighbors.find(cell => cell.index === firstRoundCell.index - 1);
-      let last = lastNeighbors.find(cell => cell.index === lastRoundCell.index + 1);
-      neighbors.push(first);
-      neighbors.push(last);
-    } else if (direction === "vertical") {
-      let first = firstNeighbors.find(cell => cell.index === firstRoundCell.index - 15);
-      let last = lastNeighbors.find(cell => cell.index === lastRoundCell.index + 15);
-      neighbors.push(first);
-      neighbors.push(last);
+  const changeShuffleTilesActive = () => {
+    if (shuffleTilesActive === true) {
+      setShuffleTilesActive(false);
+    } else {
+      setShuffleTilesActive(true);
     }
-
-    makeNeighborsClickable(neighbors);
   };
-
-  const makeClickedCellLockedNeighborsClickable = (lockedNeighbors, clickedCell) => {
-    let newBoardCells = [...boardCells];
-    let neighborsToClickable = [];
-
-    lockedNeighbors.forEach(cell => {
-      if (cell.index + 1 === clickedCell.index) {
-        console.log("left Neighbor");
-        let cellNeighbor = newBoardCells.find(neighbor => neighbor.index === cell.index - 1);
-        neighborsToClickable.push(cellNeighbor);
-        // let cellNeighbors = findLockedNeighborsInRound(cellNeighbor, -1)
-        // cellNeighbors.forEach(neighbor => neighborsToClickable.push(neighbor))
-      }
-      if (cell.index - 1 === clickedCell.index) {
-        console.log("right Neighbor");
-        let cellNeighbor = newBoardCells.find(neighbor => neighbor.index === cell.index + 1);
-        neighborsToClickable.push(cellNeighbor);
-      }
-      if (cell.index + 15 === clickedCell.index) {
-        console.log("up Neighbor");
-        let cellNeighbor = newBoardCells.find(neighbor => neighbor.index === cell.index - 15);
-        neighborsToClickable.push(cellNeighbor);
-      }
-      if (cell.index - 15 === clickedCell.index) {
-        console.log("down Neighbor");
-        let cellNeighbor = newBoardCells.find(neighbor => neighbor.index === cell.index + 15);
-        neighborsToClickable.push(cellNeighbor);
-      }
-    });
-
-    makeNeighborsClickable(neighborsToClickable);
-  };
-
-  const cellClick = clickedCell => {
-    if (clickedCell.locked || clickedCell.clickable === false) {
-      return console.log("NOPE");
-    }
-
-    // cell has tile, move tile to playercells
-    if (clickedCell.tile) {
-      let newBoardCells = [...boardCells];
-
-      let neighbors = findNeighbors(newBoardCells, clickedCell);
-      makeNeighborsUnclickable(neighbors);
-
-      moveTileToPlayerCells(clickedCell.tile);
-      clickedCell.tile = null;
-      setBoardCells(newBoardCells);
-    }
-
-    // have an active tile and clicked cell have not tile
-    if (activeTile && !clickedCell.tile) {
-      let newBoardCells = [...boardCells];
-
-      //put activeTile on clicked cell
-      clickedCell.tile = activeTile;
-      let clickedCellNeighbors = [];
-      let newActiveCells = boardCells.filter(cell => !!cell.tile && !cell.locked);
-
-      makeLockedNeighborsUnclickable(newBoardCells);
-      clickedCellNeighbors = findNeighbors(newBoardCells, clickedCell);
-      let lockedNeighbors = clickedCellNeighbors.filter(cell => cell.locked);
-      let roundCells = findCellsInRound(newBoardCells, clickedCell);
-      makeRoundCellsNeighborsUnclickable(newBoardCells, roundCells);
-
-      let direction = determineDirection(newBoardCells);
-      // let wordsInRound = findWordsInRound(roundCells, direction);
-
-      // console.log("WordsInRound");
-      // wordsInRound.forEach(cell => console.log(cell.index, cell.tile));
-
-      let mainWord = findMainWordClickableNeighbors(clickedCell, direction);
-      console.log("main Word");
-      mainWord.forEach(cell => console.log(cell.index, cell.tile.letter));
-
-      if (mainWord.length > 1) {
-        makeMainWordEdgesClickable(mainWord, direction);
-      } else {
-        makeNeighborsClickable(clickedCellNeighbors);
-        makeClickedCellLockedNeighborsClickable(lockedNeighbors, clickedCell);
-      }
-
-      setBoardCells(newBoardCells);
-      setActiveTile(null);
-    }
-
-    // executePoints();
+  const toggleTileShuffleSelected = tile => {
+    tile.shuffleSelected = !tile.shuffleSelected;
+    setPlayerCells([...playerCells]);
   };
 
   const playerCellClick = ({ tile }) => {
+    if (shuffleTilesActive) {
+      toggleTileShuffleSelected(tile);
+      return;
+    }
     if (activeTile) {
-      moveTileToPlayerCells(activeTile);
+      moveTileToPlayerCells(activeTile, boardCells, playerCells);
       setActiveTile(null);
     }
-
     if (tile) {
       setActiveTile(tile);
-      setPlayerCells(
-        playerCells.map(cell => {
-          if (cell.tile && cell.tile.id === tile.id) cell.tile = null;
-
-          return cell;
-        })
-      );
     }
   };
 
-  const drawTiles = () => {
-    const numberOfCellsWithoutTiles = playerCells.filter(cell => !cell.tile).length;
+  const executeClick = () => {
+    if (shuffleTilesActive === true) {
+      let activeCells = roundCells.filter(cell => !cell.locked);
+      let aC = activeCells.length === 0;
 
-    if (numberOfCellsWithoutTiles === 0) return;
-
-    const newTiles = drawTilesFromBag(numberOfCellsWithoutTiles);
-
-    const newPlayerCells = playerCells.map(cell => {
-      if (!cell.tile) {
-        cell.tile = newTiles.pop();
+      if (aC === false) {
+        return console.log("Cant shuffle with tiles on board");
       }
+      shuffleTiles(playerCells);
+      // fulfix för omrendering
+      // setBoardCells([...boardCells]);
+      const { activePlayer } = setup();
+      setPlayerCells(activePlayer.playerCells);
+      setActivePlayer(activePlayer);
+      setShuffleTilesActive(false);
+    }
+    if (executeBtnDisabled === true) {
+      return console.log("not valid word");
+    }
+    if (roundCells.length === 0) {
+      return console.log("Enter a Word");
+    }
 
-      return cell;
-    });
+    let newBoardCells = [];
+    setToggle(false);
+    // console.log("roundcell", roundCells);
+    if (shuffleTilesActive == false) {
+      newBoardCells = execute(roundCells, onGameOver);
+    } else {
+      newBoardCells = boardCells;
+    }
+    const { activePlayer } = setup();
 
-    setPlayerCells(newPlayerCells);
-  };
-
-  const lockWord = () => {
-    const newTiles = lockTilesWithLetter(boardCells);
-    setBoardCells(newTiles);
-  };
-
-  const ShufflePlayerTiles = () => {
-    let newPlayerCells = [...playerCells];
-    let newBag = [...bag];
-
-    newPlayerCells.forEach(cell => newBag.push(cell.tile));
-    setBag(newBag);
-    newPlayerCells.forEach(cell => (cell.tile = null));
-    setPlayerCells(newPlayerCells);
-    drawTiles();
-  };
-
-  const execute = () => {
-    lockWord();
-    drawTiles();
+    setBoardCells(newBoardCells);
+    setPlayerCells(activePlayer.playerCells);
+    setActivePlayer(activePlayer);
     setRoundCells([]);
+    setExecuteBtnDisabled(true);
   };
 
-  const isPlayerCellActive = ({ tile }) => activeTile && tile && tile.id === activeTile.id;
+  const toggleLetters = () => {
+    if (showPlayerTiles) {
+      setShowPlayerTiles(false);
+      setToggle("Show");
+    } else {
+      setShowPlayerTiles(true);
+      setToggle("Hide");
+    }
+  };
 
   return (
     <div className="board">
+      <div className="stuffLeftOfCell">
+        <ScoreBoard players={players} />
+        {/* <Button className="shuffleBtn" buttonText={<ShuffleIcon />} /> */}
+      </div>
       <div className="cells">
         {boardCells.map(cell => (
-          <BoardCell cell={cell} key={cell.index} onClick={() => cellClick(cell)}>
-            {cell.tile && cell.tile.letter}
+          <BoardCell cell={cell} key={cell.index} onClick={() => clickOnCell(cell)}>
+            {cell.tile && (
+              <div
+                className="tile"
+                style={{
+                  backgroundColor: cell.tile.color
+                }}
+              >
+                <div className="tileLetter">{cell.tile.letter}</div>
+                <div></div>
+                <div className="tilePoints">{cell.tile.points}</div>
+              </div>
+            )}
           </BoardCell>
         ))}
       </div>
-      <div className="playerCells">
-        {playerCells.map(playerCell => (
-          <div
-            className={`playerCell ${isPlayerCellActive(playerCell) && "active"}`}
-            key={playerCell.index}
-            onClick={() => playerCellClick(playerCell)}
-          >
-            {playerCell.tile && playerCell.tile.letter}
+      <div className="bottom">
+        <Button
+          className="shuffleBtn"
+          shufflebtnSelect={shuffleTilesActive}
+          buttonText={<ShuffleIcon />}
+          miniButton={true}
+          onClick={changeShuffleTilesActive}
+        />
+        <div className="playerCells">
+          <div className="toggleBtn" onClick={() => toggleLetters()}>
+            {toggle}
           </div>
-        ))}
+          {playerCells.map(playerCell => (
+            <div
+              className="playerCell"
+              // className={classNames("playerCell", { active: isPlayerCellActive(playerCell) })}
+              key={playerCell.index}
+              onClick={() => playerCellClick(playerCell)}
+            >
+              {playerCell.tile && showPlayerTiles && (
+                <div
+                  className={classNames("tile", {
+                    ["shuffleSelected"]:
+                      playerCell.tile.shuffleSelected && playerCell.tile.shuffleSelected === true
+                  })}
+                >
+                  {playerCell.tile.letter}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <Button
+          buttonText={<ExecuteIcon />}
+          disabled={executeBtnDisabled}
+          miniButton={true}
+          onClick={executeClick}
+        />
       </div>
-      <div className="stuff">
-        <div className="activeTiles">
-          <p>Active Tile</p>
-          <p>{activeTile && activeTile.letter}</p>
-          <p />
-          <p>Points</p>
-          {/* <p>{executePoints()}</p> */}
-        </div>
-        <div className="shuffleButton" onClick={execute}>
-          <span>EXECUTE</span>
-        </div>
-        <div className="executeButton" onClick={ShufflePlayerTiles}>
-          <span>SHUFFLE</span>
-        </div>
+      <div className="stuffRightOfCell">
+        <Button
+          className="button"
+          buttonText={<ExitIcon />}
+          miniButton={true}
+          onClick={() => console.log("Exit")}
+        />
       </div>
     </div>
   );
