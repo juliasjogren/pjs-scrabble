@@ -25,27 +25,27 @@ const GamePreparation = ({ onClose }) => {
   ]);
   const [selectedColor, setSelectedColor] = useState(null);
   const [players, setPlayers] = useState([
-    // {
-    //   id: 1,
-    //   name: "Pontus",
-    //   color: "lightblue",
-    //   playerCells: [],
-    //   points: 0
-    // },
-    // {
-    //   id: 2,
-    //   name: "Julia",
-    //   color: "pink",
-    //   playerCells: [],
-    //   points: 0
-    // },
-    // {
-    //   id: 3,
-    //   name: "Belgarath",
-    //   color: "green",
-    //   playerCells: [],
-    //   points: 0
-    // }
+    {
+      id: 1,
+      name: "Pontus",
+      color: "lightblue",
+      playerCells: [],
+      points: 0
+    },
+    {
+      id: 2,
+      name: "Julia",
+      color: "pink",
+      playerCells: [],
+      points: 0
+    },
+    {
+      id: 3,
+      name: "Belgarath",
+      color: "green",
+      playerCells: [],
+      points: 0
+    }
   ]);
   const [playerName, setPlayerName] = useState("");
   const playerNameRef = useRef();
@@ -105,17 +105,17 @@ const GamePreparation = ({ onClose }) => {
 
   const removePlayer = player => {
     let newPlayers = players.filter(pl => pl.id !== player.id);
-    console.log("newPlayers", newPlayers);
     let c = player.color;
-    console.log("c", c);
     let co = colors.find(color => color.name === c);
-    console.log("co", co);
     co.picked = false;
     setColors(colors);
     setPlayers(newPlayers);
   };
 
   const startGame = () => {
+    if (players.length === 0) {
+      return console.log("must have at least one player");
+    }
     onClose(players);
   };
 

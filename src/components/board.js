@@ -27,13 +27,23 @@ const ShuffleIcon = () => (
   </svg>
 );
 const ExecuteIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
     <path d="M3 22v-20l18 10-18 10z" />
   </svg>
 );
 
 const ExitIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
     <path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" />
   </svg>
 );
@@ -186,7 +196,6 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     }
 
     let newBoardCells = [];
-    setToggle(false);
     // console.log("roundcell", roundCells);
     if (shuffleTilesActive == false) {
       newBoardCells = execute(roundCells, onGameOver);
@@ -195,11 +204,13 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     }
     const { activePlayer } = setup();
 
+    setToggle("Show");
+    setShowPlayerTiles(false);
     setBoardCells(newBoardCells);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
     setRoundCells([]);
-    setExecuteBtnDisabled(true);
+    setExecuteBtnDisabled(false);
   };
 
   const toggleLetters = () => {
@@ -220,7 +231,11 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       </div>
       <div className="cells">
         {boardCells.map(cell => (
-          <BoardCell cell={cell} key={cell.index} onClick={() => clickOnCell(cell)}>
+          <BoardCell
+            cell={cell}
+            key={cell.index}
+            onClick={() => clickOnCell(cell)}
+          >
             {cell.tile && (
               <div
                 className="tile"
@@ -259,7 +274,8 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
                 <div
                   className={classNames("tile", {
                     ["shuffleSelected"]:
-                      playerCell.tile.shuffleSelected && playerCell.tile.shuffleSelected === true
+                      playerCell.tile.shuffleSelected &&
+                      playerCell.tile.shuffleSelected === true
                   })}
                 >
                   {playerCell.tile.letter}
