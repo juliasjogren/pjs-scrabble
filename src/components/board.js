@@ -159,6 +159,9 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   };
 
   const playerCellClick = ({ tile }) => {
+    if (!tile) {
+      return console.log("empty player cell");
+    }
     if (shuffleTilesActive) {
       toggleTileShuffleSelected(tile);
       return;
