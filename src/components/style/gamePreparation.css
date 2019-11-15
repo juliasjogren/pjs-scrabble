@@ -157,6 +157,7 @@ input.textInput::placeholder {
   height: calc(100% - (150px + 5%));
   display: flex;
   justify-content: center;
+  padding: 2%;
   align-items: center;
   flex-flow: row wrap;
 }
@@ -164,7 +165,11 @@ input.textInput::placeholder {
 .player {
   width: 40%;
   height: 40px;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2%;
+  margin: 1%;
   text-align: center;
   border: 2px solid rgba(0, 0, 0, 0.849);
   font-weight: bold;

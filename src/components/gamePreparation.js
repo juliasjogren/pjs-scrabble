@@ -3,6 +3,16 @@ import classNames from "classnames";
 import Button from "./button";
 
 import "./style/gamePreparation.css";
+const ExitIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" />
+  </svg>
+);
 
 const GamePreparation = ({ onClose }) => {
   const [colors, setColors] = useState([
@@ -93,6 +103,18 @@ const GamePreparation = ({ onClose }) => {
   //   console.log("startgame");
   // };
 
+  const removePlayer = player => {
+    let newPlayers = players.filter(pl => pl.id !== player.id);
+    console.log("newPlayers", newPlayers);
+    let c = player.color;
+    console.log("c", c);
+    let co = colors.find(color => color.name === c);
+    console.log("co", co);
+    co.picked = false;
+    setColors(colors);
+    setPlayers(newPlayers);
+  };
+
   const startGame = () => {
     onClose(players);
   };
@@ -127,7 +149,6 @@ const GamePreparation = ({ onClose }) => {
         </div>
       </div>
       <div className="players">
-        <div className="playerTitle">players:</div>
         <div className="playerList">
           {players.map(player => (
             <div
@@ -138,6 +159,12 @@ const GamePreparation = ({ onClose }) => {
               }}
             >
               {player.name}
+              <Button
+                className="button"
+                buttonText={<ExitIcon />}
+                playerRemove={true}
+                onClick={() => removePlayer(player)}
+              />
             </div>
           ))}
         </div>
