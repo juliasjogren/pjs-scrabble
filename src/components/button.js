@@ -13,14 +13,23 @@ const button = props => {
   return (
     <div
       className={classNames("buttonArea", {
-        miniButton: miniButton && miniButton === true,
+        areaMiniButton: miniButton && miniButton === true,
         playerRemove: playerRemove && playerRemove === true,
         disabled: disabled && disabled === true,
         shuffleActive: shufflebtnSelect && shufflebtnSelect === true
       })}
       onClick={click}
     >
-      {<div className="btn">{buttonText}</div>}
+      {
+        <div
+          className={classNames("btn", {
+            btnMiniButton: miniButton && miniButton === true,
+            btnPlayerRemove: playerRemove && playerRemove === true
+          })}
+        >
+          {buttonText}
+        </div>
+      }
     </div>
   );
 };

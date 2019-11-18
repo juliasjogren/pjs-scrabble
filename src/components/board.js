@@ -277,7 +277,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
                 <div
                   className={classNames("tile", {
                     ["shuffleSelected"]:
-                      playerCell.tile.shuffleSelected &&
+                      shuffleTilesActive === true &&
                       playerCell.tile.shuffleSelected === true
                   })}
                 >
