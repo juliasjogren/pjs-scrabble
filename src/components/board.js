@@ -226,6 +226,15 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     }
   };
 
+  const exitGame = () => {
+    let result = confirm("Are you sure that you want to end this game");
+    console.log(result);
+    if (result == true) {
+      let sortedPlayers = players.sort((a, b) => b.points - a.points);
+      onGameOver(sortedPlayers);
+    } else return;
+  };
+
   return (
     <div className="board">
       <div className="stuffLeftOfCell">
@@ -299,7 +308,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
           className="button"
           buttonText={<ExitIcon />}
           miniButton={true}
-          onClick={() => console.log("Exit")}
+          onClick={() => exitGame()}
         />
       </div>
     </div>

@@ -42,6 +42,10 @@
 
   transition: background-color 0.3s;
 }
+.cell:hover {
+  background-color: green;
+}
+
 .cell.clickable:not(.locked) {
   background-color: green;
 }
