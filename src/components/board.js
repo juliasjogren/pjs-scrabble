@@ -74,7 +74,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     if (cell.locked || cell.clickable === false) {
       return console.log("You cant click on this cell");
     }
-    console.log("First", executeBtnDisabled);
+    // console.log("First", executeBtnDisabled);
     cellClick(cell, activeTile, boardCells, playerCells);
     setActiveTile(null);
     let newRoundCells = findCellsInRound(boardCells, cell);
@@ -131,7 +131,6 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       }
 
       if (cell === lastCell) {
-        console.log("hello");
         cellInLine.push(cell);
       }
     }
@@ -202,14 +201,17 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     // console.log("roundcell", roundCells);
     if (shuffleTilesActive == false) {
       newBoardCells = execute(roundCells, onGameOver);
-    } else {
-      newBoardCells = boardCells;
-    }
-    const { activePlayer } = setup();
 
+      if (newBoardCells) {
+        setBoardCells(newBoardCells);
+      } else {
+        return console.log("bad Word");
+      }
+    }
+
+    const { activePlayer } = setup();
     setToggle("Show");
     setShowPlayerTiles(false);
-    setBoardCells(newBoardCells);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
     setRoundCells([]);

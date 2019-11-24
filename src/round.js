@@ -5,12 +5,18 @@ let playerCells = [];
 let roundCells = [];
 let latestClickedCell = null;
 
-const findLockedNeighborsInRound = (lockedNeighbor, velocity, lockedNeighbors) => {
+const findLockedNeighborsInRound = (
+  lockedNeighbor,
+  velocity,
+  lockedNeighbors
+) => {
   if (!lockedNeighbors) {
     lockedNeighbors = [];
   }
 
-  let n = boardCells.find(cell => lockedNeighbor.index + velocity === cell.index);
+  let n = boardCells.find(
+    cell => lockedNeighbor.index + velocity === cell.index
+  );
 
   if (n.locked) {
     lockedNeighbors.push(n);
@@ -108,7 +114,7 @@ export const makeMainWord = (roundCells, direction) => {
   let unlockedRoundCells = roundCells.filter(cell => !cell.locked);
   let cellToCheck = unlockedRoundCells[0];
   let mainWord = [];
-  console.log("cell to check", cellToCheck);
+  // console.log("cell to check", cellToCheck);
   mainWord.push(cellToCheck);
   let velocity = 0;
   if (direction === "horizontal") {
@@ -127,8 +133,8 @@ export const makeMainWord = (roundCells, direction) => {
     mainWord = lesserRoundCells.concat(higherRoundCells, unlockedRoundCells);
   }
 
-  console.log("mainWord in make mainword", mainWord);
-  mainWord.forEach(cell => console.log(cell.tile.letter));
+  // console.log("mainWord in make mainword", mainWord);
+  // mainWord.forEach(cell => console.log(cell.tile.letter));
 
   let sortedMainWord = mainWord.sort((a, b) => a.index - b.index);
   return sortedMainWord;
@@ -149,7 +155,12 @@ export const moveTileToPlayerCells = (tile, newBoardCells, newPlayerCells) => {
   });
 };
 
-export function cellClick(clickedCell, activeTile, newBoardCells, newPlayerCells) {
+export function cellClick(
+  clickedCell,
+  activeTile,
+  newBoardCells,
+  newPlayerCells
+) {
   playerCells = newPlayerCells;
   boardCells = newBoardCells;
   latestClickedCell = clickedCell;
