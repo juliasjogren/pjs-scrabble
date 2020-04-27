@@ -16,7 +16,7 @@ const ShuffleIcon = () => (
   </svg>
 );
 
-const playButtonSvg = (
+const PlayButtonSvg = () => (
   <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
     <polyline points="10, 20 110, 60 10, 100 10, 20" transform="scale(0.9)" />
   </svg>
@@ -55,7 +55,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     if (cell.locked || cell.clickable === false) {
       return console.log("You cant click on this cell");
     }
-    console.log("First", executeBtnDisabled);
+    // console.log("First", executeBtnDisabled);
     cellClick(cell, activeTile, boardCells, playerCells);
     setActiveTile(null);
     let newRoundCells = findCellsInRound(boardCells, cell);
@@ -112,7 +112,6 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       }
 
       if (cell === lastCell) {
-        console.log("hello");
         cellInLine.push(cell);
       }
     }
@@ -140,6 +139,9 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   };
 
   const playerCellClick = ({ tile }) => {
+    if (!tile) {
+      return console.log("empty player cell");
+    }
     if (shuffleTilesActive) {
       toggleTileShuffleSelected(tile);
       return;
@@ -177,20 +179,24 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     }
 
     let newBoardCells = [];
-    setToggle(false);
     // console.log("roundcell", roundCells);
     if (shuffleTilesActive == false) {
       newBoardCells = execute(roundCells, onGameOver);
-    } else {
-      newBoardCells = boardCells;
-    }
-    const { activePlayer } = setup();
 
-    setBoardCells(newBoardCells);
+      if (newBoardCells) {
+        setBoardCells(newBoardCells);
+      } else {
+        return console.log("bad Word");
+      }
+    }
+
+    const { activePlayer } = setup();
+    setToggle("Show");
+    setShowPlayerTiles(false);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
     setRoundCells([]);
-    setExecuteBtnDisabled(true);
+    setExecuteBtnDisabled(false);
   };
 
   const toggleLetters = () => {
@@ -201,6 +207,15 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       setShowPlayerTiles(true);
       setToggle("Hide");
     }
+  };
+
+  const exitGame = () => {
+    let result = confirm("Are you sure that you want to end this game");
+    console.log(result);
+    if (result == true) {
+      let sortedPlayers = players.sort((a, b) => b.points - a.points);
+      onGameOver(sortedPlayers);
+    } else return;
   };
 
   return (
@@ -243,7 +258,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
               {playerCell.tile && showPlayerTiles && (
                 <div
                   className={classNames("tile", {
-                    ["shuffleSelected"]: playerCell.tile.shuffleSelected && playerCell.tile.shuffleSelected === true,
+                    ["shuffleSelected"]: shuffleTilesActive === true && playerCell.tile.shuffleSelected === true,
                   })}
                 >
                   {playerCell.tile.letter}
@@ -252,10 +267,10 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
             </div>
           ))}
         </div>
-        <Button svg={playButtonSvg} disabled={executeBtnDisabled} miniButton={true} onClick={executeClick} />
+        <Button svg={<PlayButtonSvg />} disabled={executeBtnDisabled} miniButton={true} onClick={executeClick} />
       </div>
       <div className="stuffRightOfCell">
-        <Button className="button" svg={<ExitIcon />} miniButton={true} onClick={() => console.log("Exit")} />
+        <Button className="button" svg={<ExitIcon />} miniButton={true} onClick={() => exitGame()} />
       </div>
     </div>
   );

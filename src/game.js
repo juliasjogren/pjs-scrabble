@@ -14,6 +14,10 @@ import {
 } from "./utils";
 import GameOver from "./components/gameOver";
 
+import dictionary from "./dictionary.json";
+
+console.log("dictionary?", Boolean(dictionary));
+
 let boardCells = [];
 let bag = [];
 let players = [];
@@ -65,7 +69,9 @@ const lockWord = () => {
 
 const drawTiles = () => {
   if (bag.length === 0) return;
-  const numberOfCellsWithoutTiles = activePlayer.playerCells.filter(cell => !cell.tile).length;
+  const numberOfCellsWithoutTiles = activePlayer.playerCells.filter(
+    cell => !cell.tile
+  ).length;
 
   if (numberOfCellsWithoutTiles === 0) return;
 
@@ -182,10 +188,26 @@ export const shuffleTiles = playerCells => {
   return boardCells;
 };
 
+const aproveWords = words => {
+  return words.every(word => {
+    let stringWord = "";
+    console.log(word);
+    for (let l = 0; l < word.length; l++) {
+      let letter = word[l].tile.letter;
+      stringWord += letter;
+    }
+    console.log(stringWord);
+    let findInDic = Boolean(dictionary[stringWord]);
+    console.log("findInDic", findInDic);
+
+    return findInDic;
+  });
+};
+
 export function execute(roundCells, onGameOver) {
-  let words = findWordsInRoundCells(roundCells);
-  let wordsApproved = true;
   console.log("execute");
+  let words = findWordsInRoundCells(roundCells);
+  let wordsApproved = aproveWords(words);
 
   if (wordsApproved) {
     lockWord();
