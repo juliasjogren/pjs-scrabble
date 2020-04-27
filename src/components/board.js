@@ -4,47 +4,28 @@ import Button from "./button";
 import ScoreBoard from "./scoreBoard";
 // import ActivePlayerInfo from "./activePlayerInfo";
 import { setup, execute, shuffleTiles } from "../game";
-import {
-  moveTileToPlayerCells,
-  cellClick,
-  findCellsInRound,
-  determineDirection,
-  makeMainWord
-} from "../round";
+import { moveTileToPlayerCells, cellClick, findCellsInRound, determineDirection, makeMainWord } from "../round";
 import { findNeighbors, makeAllUnlockedCellsClickable } from "../utils";
 import "./style/board.css";
 import classNames from "classnames";
 
 const ShuffleIcon = () => (
-  <svg
-    width="24"
-    height="24"
-    xmlns="http://www.w3.org/2000/svg"
-    fill-rule="evenodd"
-    clip-rule="evenodd"
-  >
-    <path d="M12 0c6.623 0 12 5.377 12 12s-5.377 12-12 12-12-5.377-12-12 5.377-12 12-12zm2.085 14h-9v2h9v3l5-4-5-4v3zm-4-6v-3l-5 4 5 4v-3h9v-2h-9z" />
+  <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
+    <polyline points="0,35 0,25 30,25 30,10 60,30 30,50 30,35 " transform="translate(20, 0)"></polyline>
+    <polyline points="0,35 0,25 30,25 30,10 60,30 30,50 30,35 " transform="rotate(180)translate(-75, -100)"></polyline>
   </svg>
 );
-const ExecuteIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-  >
-    <path d="M3 22v-20l18 10-18 10z" />
+
+const playButtonSvg = (
+  <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
+    <polyline points="10, 20 110, 60 10, 100 10, 20" transform="scale(0.9)" />
   </svg>
 );
 
 const ExitIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-  >
-    <path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" />
+  <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
+    <rect x="0" y="10" width="15" height="80" transform="rotate(-40)translate(0, 20)"></rect>
+    <rect x="0" y="10" width="15" height="80" transform="rotate(40)translate(60, -45)"></rect>
   </svg>
 );
 
@@ -70,15 +51,15 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     setPlayers(players);
   }, []);
 
-  const clickOnCell = cell => {
+  const clickOnCell = (cell) => {
     if (cell.locked || cell.clickable === false) {
       return console.log("You cant click on this cell");
     }
-    // console.log("First", executeBtnDisabled);
+    console.log("First", executeBtnDisabled);
     cellClick(cell, activeTile, boardCells, playerCells);
     setActiveTile(null);
     let newRoundCells = findCellsInRound(boardCells, cell);
-    let filterdRoundCells = newRoundCells.filter(cell => cell.tile);
+    let filterdRoundCells = newRoundCells.filter((cell) => cell.tile);
     setRoundCells(filterdRoundCells);
     // CheckifValidWord(cell);
     makeAllUnlockedCellsClickable(boardCells);
@@ -91,7 +72,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     }
   }, [roundCells]);
 
-  const CheckifValidWord = clickedCell => {
+  const CheckifValidWord = (clickedCell) => {
     let direction = determineDirection();
     let mainWord = makeMainWord(roundCells, direction);
     let cellInLine = [];
@@ -101,8 +82,8 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       let lastCell = mainWord[mainWord.length - 1];
       let velocity = 0;
 
-      let firstGameCell = boardCells.find(cell => cell.index === 112);
-      let lockedRoundCells = roundCells.filter(cell => cell.locked);
+      let firstGameCell = boardCells.find((cell) => cell.index === 112);
+      let lockedRoundCells = roundCells.filter((cell) => cell.locked);
       let firstInRound = roundCells.includes(firstGameCell);
       let noLockedcellsInRound = lockedRoundCells.length < 1;
 
@@ -131,6 +112,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       }
 
       if (cell === lastCell) {
+        console.log("hello");
         cellInLine.push(cell);
       }
     }
@@ -152,15 +134,12 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       setShuffleTilesActive(true);
     }
   };
-  const toggleTileShuffleSelected = tile => {
+  const toggleTileShuffleSelected = (tile) => {
     tile.shuffleSelected = !tile.shuffleSelected;
     setPlayerCells([...playerCells]);
   };
 
   const playerCellClick = ({ tile }) => {
-    if (!tile) {
-      return console.log("empty player cell");
-    }
     if (shuffleTilesActive) {
       toggleTileShuffleSelected(tile);
       return;
@@ -176,7 +155,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
 
   const executeClick = () => {
     if (shuffleTilesActive === true) {
-      let activeCells = roundCells.filter(cell => !cell.locked);
+      let activeCells = roundCells.filter((cell) => !cell.locked);
       let aC = activeCells.length === 0;
 
       if (aC === false) {
@@ -198,24 +177,20 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     }
 
     let newBoardCells = [];
+    setToggle(false);
     // console.log("roundcell", roundCells);
     if (shuffleTilesActive == false) {
       newBoardCells = execute(roundCells, onGameOver);
-
-      if (newBoardCells) {
-        setBoardCells(newBoardCells);
-      } else {
-        return console.log("bad Word");
-      }
+    } else {
+      newBoardCells = boardCells;
     }
-
     const { activePlayer } = setup();
-    setToggle("Show");
-    setShowPlayerTiles(false);
+
+    setBoardCells(newBoardCells);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
     setRoundCells([]);
-    setExecuteBtnDisabled(false);
+    setExecuteBtnDisabled(true);
   };
 
   const toggleLetters = () => {
@@ -228,15 +203,6 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     }
   };
 
-  const exitGame = () => {
-    let result = confirm("Are you sure that you want to end this game");
-    console.log(result);
-    if (result == true) {
-      let sortedPlayers = players.sort((a, b) => b.points - a.points);
-      onGameOver(sortedPlayers);
-    } else return;
-  };
-
   return (
     <div className="board">
       <div className="stuffLeftOfCell">
@@ -244,17 +210,13 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
         {/* <Button className="shuffleBtn" buttonText={<ShuffleIcon />} /> */}
       </div>
       <div className="cells">
-        {boardCells.map(cell => (
-          <BoardCell
-            cell={cell}
-            key={cell.index}
-            onClick={() => clickOnCell(cell)}
-          >
+        {boardCells.map((cell) => (
+          <BoardCell cell={cell} key={cell.index} onClick={() => clickOnCell(cell)}>
             {cell.tile && (
               <div
                 className="tile"
                 style={{
-                  backgroundColor: cell.tile.color
+                  backgroundColor: cell.tile.color,
                 }}
               >
                 <div className="tileLetter">{cell.tile.letter}</div>
@@ -266,18 +228,12 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
         ))}
       </div>
       <div className="bottom">
-        <Button
-          className="shuffleBtn"
-          shufflebtnSelect={shuffleTilesActive}
-          buttonText={<ShuffleIcon />}
-          miniButton={true}
-          onClick={changeShuffleTilesActive}
-        />
+        <Button className="shuffleBtn" shufflebtnSelect={shuffleTilesActive} svg={<ShuffleIcon />} miniButton={true} onClick={changeShuffleTilesActive} />
         <div className="playerCells">
           <div className="toggleBtn" onClick={() => toggleLetters()}>
             {toggle}
           </div>
-          {playerCells.map(playerCell => (
+          {playerCells.map((playerCell) => (
             <div
               className="playerCell"
               // className={classNames("playerCell", { active: isPlayerCellActive(playerCell) })}
@@ -287,9 +243,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
               {playerCell.tile && showPlayerTiles && (
                 <div
                   className={classNames("tile", {
-                    ["shuffleSelected"]:
-                      shuffleTilesActive === true &&
-                      playerCell.tile.shuffleSelected === true
+                    ["shuffleSelected"]: playerCell.tile.shuffleSelected && playerCell.tile.shuffleSelected === true,
                   })}
                 >
                   {playerCell.tile.letter}
@@ -298,20 +252,10 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
             </div>
           ))}
         </div>
-        <Button
-          buttonText={<ExecuteIcon />}
-          disabled={executeBtnDisabled}
-          miniButton={true}
-          onClick={executeClick}
-        />
+        <Button svg={playButtonSvg} disabled={executeBtnDisabled} miniButton={true} onClick={executeClick} />
       </div>
       <div className="stuffRightOfCell">
-        <Button
-          className="button"
-          buttonText={<ExitIcon />}
-          miniButton={true}
-          onClick={() => exitGame()}
-        />
+        <Button className="button" svg={<ExitIcon />} miniButton={true} onClick={() => console.log("Exit")} />
       </div>
     </div>
   );

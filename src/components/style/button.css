@@ -7,8 +7,6 @@
   width: 20vmin;
   align-items: center;
   justify-content: center;
-  /* align-self: flex-end; */
-  /* padding: 5%; */
 }
 .buttonArea:hover {
   background-color: lime;
@@ -18,33 +16,37 @@
   background-color: red;
 }
 
-.areaMiniButton {
+.miniButton {
   width: 10vmin;
-  /* width: 20%; */
-}
-
-.playerRemove {
-  width: 30px;
-  height: 30px;
-  padding: 1%;
 }
 
 .btn {
-  display: flex;
-  width: 80%;
-  height: 70%;
-  padding: 5%;
-  align-items: center;
-  justify-content: center;
+  width: 85%;
+  height: 80%;
+  /* overflow: hidden; */
   border: 2px solid rgba(0, 0, 0, 0.849);
   background-color: grey;
+  filter: drop-shadow(4px 4px 4px black);
 }
 
-.btnPlayerRemove {
-  width: 95%;
-  height: 95%;
+.svg {
+  filter: drop-shadow(5px 5px 5px black);
 }
 
+.svg:hover {
+  fill: lime;
+  transform: scale(0.9);
+  /* filter: drop-shadow(5px 5px 5px black); */
+}
+
+.startButton {
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-left: 40px solid green;
+  border-right: 40px solid green;
+  border-bottom: 15px solid transparent;
+}
 .shuffleActive {
   background-color: lime;
 }

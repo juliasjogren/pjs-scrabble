@@ -2,10 +2,13 @@ import React from "react";
 import "./style/button.css";
 import classNames from "classnames";
 
-const button = props => {
+const button = (props) => {
   // console.log(props);
   let miniButton = props.miniButton;
-  let playerRemove = props.playerRemove;
+  let addButton = props.addButton;
+  let startButton = props.startButton;
+  let hover = true;
+  let svg = props.svg;
   let shufflebtnSelect = props.shufflebtnSelect;
   let buttonText = props.buttonText;
   let click = props.onClick;
@@ -13,21 +16,20 @@ const button = props => {
   return (
     <div
       className={classNames("buttonArea", {
-        areaMiniButton: miniButton && miniButton === true,
-        playerRemove: playerRemove && playerRemove === true,
+        miniButton: miniButton && miniButton === true,
+        hvr: hover && hover === true,
         disabled: disabled && disabled === true,
-        shuffleActive: shufflebtnSelect && shufflebtnSelect === true
+        shuffleActive: shufflebtnSelect && shufflebtnSelect === true,
       })}
       onClick={click}
     >
       {
         <div
           className={classNames("btn", {
-            btnMiniButton: miniButton && miniButton === true,
-            btnPlayerRemove: playerRemove && playerRemove === true
+            hvr: hover && hover === true,
           })}
         >
-          {buttonText}
+          {svg}
         </div>
       }
     </div>

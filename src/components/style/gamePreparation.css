@@ -19,7 +19,7 @@
 
 .playerNameInput {
   height: 80%;
-  width: 80%;
+  width: 90%;
   grid-column: 1;
   display: flex;
   justify-content: center;
@@ -44,6 +44,10 @@ input {
   color: black;
 }
 
+.noName {
+  border: 2px solid crimson;
+}
+
 input.textInput::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: black;
@@ -51,88 +55,69 @@ input.textInput::placeholder {
 }
 
 .colorSelect {
+  padding: 5px;
   justify-content: center;
-  width: 80%;
+  width: 90%;
   display: grid;
   grid-template-columns: 20% 20% 20%;
   grid-template-rows: 50% 50%;
 }
 
-.teal {
-  background-color: teal;
+.nonSelected {
+  border: 2px solid crimson;
+}
+
+.color {
   border: 2px solid rgba(0, 0, 0.849);
   cursor: pointer;
   height: 20px;
+}
+
+.teal {
+  background-color: teal;
   color: rgb(16, 145, 224);
   grid-row: 1;
   grid-column: 1;
 }
 .purple {
   background-color: purple;
-  border: 2px solid rgba(0, 0, 0.849);
-  cursor: pointer;
-  height: 20px;
   color: purple;
   grid-row: 1;
   grid-column: 2;
 }
 .darkred {
   background-color: darkred;
-  border: 2px solid rgba(0, 0, 0.849);
-  cursor: pointer;
-  height: 20px;
   color: rgb(189, 57, 33);
   grid-row: 1;
   grid-column: 3;
 }
 .Crimson {
   background-color: Crimson;
-  border: 2px solid rgba(0, 0, 0.849);
-  cursor: pointer;
-  height: 20px;
   color: rgb(228, 47, 137);
   grid-row: 2;
   grid-column: 1;
 }
 .yellow {
   background-color: rgb(226, 226, 39);
-  border: 2px solid rgba(0, 0, 0.849);
-  cursor: pointer;
-  height: 20px;
   color: rgb(226, 226, 39);
   grid-row: 2;
   grid-column: 2;
 }
 .limegreen {
   background-color: limegreen;
-  border: 2px solid rgba(0, 0, 0.849);
-  cursor: pointer;
-  height: 20px;
   color: rgb(31, 113, 31);
   grid-row: 2;
   grid-column: 3;
 }
 
-.teal.selected {
+.color.selected {
   border: 2px solid lime;
 }
 
-.purple.selected {
-  border: 2px solid lime;
+.picked {
+  background-color: black;
+  /* border: 0.5px solid red; */
 }
-.darkred.selected {
-  border: 2px solid lime;
-}
-.Crimson.selected {
-  border: 2px solid lime;
-}
-.yellow.selected {
-  border: 2px solid lime;
-}
-.limegreen.selected {
-  border: 2px solid lime;
-}
-
 .AddPlayerBtn {
   /* widows: 100%; */
   width: 90%;
@@ -157,7 +142,6 @@ input.textInput::placeholder {
   height: calc(100% - (150px + 5%));
   display: flex;
   justify-content: center;
-  padding: 2%;
   align-items: center;
   flex-flow: row wrap;
 }
@@ -165,11 +149,7 @@ input.textInput::placeholder {
 .player {
   width: 40%;
   height: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2%;
-  margin: 1%;
+
   text-align: center;
   border: 2px solid rgba(0, 0, 0, 0.849);
   font-weight: bold;

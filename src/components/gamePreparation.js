@@ -3,16 +3,6 @@ import classNames from "classnames";
 import Button from "./button";
 
 import "./style/gamePreparation.css";
-const ExitIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-  >
-    <path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" />
-  </svg>
-);
 
 const GamePreparation = ({ onClose }) => {
   const [colors, setColors] = useState([
@@ -21,9 +11,13 @@ const GamePreparation = ({ onClose }) => {
     { id: 3, name: "darkred" },
     { id: 4, name: "Crimson" },
     { id: 5, name: "yellow" },
-    { id: 6, name: "limegreen" }
+    { id: 6, name: "limegreen" },
   ]);
-  const [selectedColor, setSelectedColor] = useState(null);
+  const setColor = () => {
+    let avalibleColors = colors.filter((color) => !color.picked);
+    return avalibleColors[0];
+  };
+  const [selectedColor, setSelectedColor] = useState(setColor());
   const [players, setPlayers] = useState([
     // {
     //   id: 1,
@@ -47,16 +41,28 @@ const GamePreparation = ({ onClose }) => {
     //   points: 0
     // }
   ]);
-  const [playerName, setPlayerName] = useState("");
+  const [playerName, setPlayerName] = useState("Player " + (players.length + 1));
   const playerNameRef = useRef();
   // let inputText = "player" + (players.length + 1);
   // export const findPlayers = () => {
   //   return players;
   // };
+  const playButtonSvg = (
+    <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
+      <polyline points="0, 10 110, 50 0, 90 0, 10" />
+    </svg>
+  );
+  const addButtonSvg = (
+    <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
+      <rect x="37" y="10" width="25" height="80"></rect>
+      <rect x="10" y="40" width="80" height="25"></rect>
+    </svg>
+  );
 
-  const colorClick = color => {
-    // console.log("color", color.id, color);
-
+  const colorClick = (color) => {
+    if (color.picked) {
+      return;
+    }
     if (selectedColor && selectedColor.selected === true) {
       selectedColor.selected = false;
     }
@@ -67,15 +73,17 @@ const GamePreparation = ({ onClose }) => {
   const addPlayer = () => {
     let newColors = [...colors];
     let playerColor = selectedColor;
+
     if (!playerColor) {
       return console.log("no color picked");
     }
     if (playerColor && playerColor.picked) {
       return console.log("color allready picked");
     }
-    if (playerName === "") {
-      return console.log("no name picked");
+    if (!/\S/.test(playerName)) {
+      return console.log("Not valid name");
     }
+
     let id = players.length + 1;
     setPlayers([
       ...players,
@@ -84,16 +92,15 @@ const GamePreparation = ({ onClose }) => {
         name: playerName,
         color: playerColor.name,
         playerCells: [],
-        points: 0
-      }
+        points: 0,
+      },
     ]);
-
-    let col = newColors.find(color => color === selectedColor);
+    let col = newColors.find((color) => color === selectedColor);
     col.picked = true;
     setColors(newColors);
 
-    setSelectedColor(null);
-    setPlayerName("");
+    setSelectedColor(setColor());
+    setPlayerName("Player " + (players.length + 2));
 
     playerNameRef.current.focus();
     // console.log("players", players);
@@ -103,19 +110,7 @@ const GamePreparation = ({ onClose }) => {
   //   console.log("startgame");
   // };
 
-  const removePlayer = player => {
-    let newPlayers = players.filter(pl => pl.id !== player.id);
-    let c = player.color;
-    let co = colors.find(color => color.name === c);
-    co.picked = false;
-    setColors(colors);
-    setPlayers(newPlayers);
-  };
-
   const startGame = () => {
-    if (players.length === 0) {
-      return console.log("must have at least one player");
-    }
     onClose(players);
   };
 
@@ -123,20 +118,20 @@ const GamePreparation = ({ onClose }) => {
     <div className="gamePreparation">
       <div className="playerPreparation">
         <div className="playerNameInput">
-          <input
-            ref={playerNameRef}
-            className="textInput"
-            value={playerName}
-            placeholder="Write player name here.."
-            onChange={e => setPlayerName(e.target.value)}
-          ></input>
+          <input ref={playerNameRef} className="textInput" value={playerName} onChange={(e) => setPlayerName(e.target.value)}></input>
         </div>
-        <div className="colorSelect">
-          {colors.map(color => (
+        <div
+          className={classNames("colorSelect", {
+            nonSelected: !selectedColor && selectedColor === null,
+          })}
+        >
+          {colors.map((color) => (
             <div
               key={color.id}
               className={classNames(color.name, {
-                selected: selectedColor && color === selectedColor
+                color: color && color !== null,
+                selected: selectedColor && color === selectedColor,
+                picked: color.picked && color.picked === true,
               })}
               onClick={() => colorClick(color)}
             >
@@ -145,32 +140,27 @@ const GamePreparation = ({ onClose }) => {
           ))}
         </div>
         <div className="AddPlayerBtn">
-          <Button buttonText={"Add player"} onClick={() => addPlayer()} />
+          <Button title="Add player" addButton={true} svg={addButtonSvg} onClick={() => addPlayer()} />
         </div>
       </div>
       <div className="players">
+        <div className="playerTitle">players:</div>
         <div className="playerList">
-          {players.map(player => (
+          {players.map((player) => (
             <div
               key={player.id}
               className="player"
               style={{
-                backgroundColor: player.color
+                backgroundColor: player.color,
               }}
             >
               {player.name}
-              <Button
-                className="button"
-                buttonText={<ExitIcon />}
-                playerRemove={true}
-                onClick={() => removePlayer(player)}
-              />
             </div>
           ))}
         </div>
       </div>
       <div className="startBtn">
-        <Button buttonText={"Start game"} onClick={startGame} />
+        <Button title="Start game" startButton={true} svg={playButtonSvg} onClick={startGame} />
       </div>
     </div>
   );
