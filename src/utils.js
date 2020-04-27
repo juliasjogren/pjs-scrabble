@@ -24,7 +24,7 @@ let makeAlfa = () => [
   { letter: "W", amount: 2, points: 4 },
   { letter: "X", amount: 1, points: 8 },
   { letter: "Y", amount: 2, points: 4 },
-  { letter: "Z", amount: 1, points: 10 }
+  { letter: "Z", amount: 1, points: 10 },
 ];
 
 // let alfaTest = [
@@ -65,7 +65,7 @@ export function createBoardCells() {
     return {
       index,
       clickable: clickableTile,
-      tile: null
+      tile: null,
     };
   }
 
@@ -75,7 +75,7 @@ export function createBoardCells() {
 }
 
 let letterCount = 0;
-const makeRandomTileFromAlfaAndDecreaseItsAmount = alfa => {
+const makeRandomTileFromAlfaAndDecreaseItsAmount = (alfa) => {
   const tilesInBag = alfa.reduce((total, letter) => {
     return total + letter.amount;
   }, 0);
@@ -83,16 +83,16 @@ const makeRandomTileFromAlfaAndDecreaseItsAmount = alfa => {
   if (tilesInBag === 0) return console.log("No tiles left") || { letter: "NOPE" };
 
   const letter = alfa[Math.floor(Math.random() * alfa.length)];
-  const result = alfa.find(alfa => alfa.letter === letter.letter);
+  const result = alfa.find((alfa) => alfa.letter === letter.letter);
   result.amount -= 1;
-  alfa = alfa.filter(alfa => alfa.amount > 0);
+  alfa = alfa.filter((alfa) => alfa.amount > 0);
   letterCount++;
 
   return { letter: letter.letter, id: letterCount, points: letter.points };
 };
 
-export const makeAllUnlockedCellsClickable = BoardCells => {
-  let unlockedCells = BoardCells.filter(cell => !cell.locked);
+export const makeAllUnlockedCellsClickable = (BoardCells) => {
+  let unlockedCells = BoardCells.filter((cell) => !cell.locked);
   // console.log(unlockedCells);
   makeNeighborsClickable(unlockedCells);
 };
@@ -112,7 +112,7 @@ export function createBag() {
     i--;
   }
 
-  console.log("bag in create bag", bag);
+  // console.log("bag in create bag", bag);
 
   return bag;
 }
@@ -124,7 +124,7 @@ export function createPlayerCells(bag) {
     .fill()
     .map((_, i) => ({
       index: i,
-      tile: tiles.pop()
+      tile: tiles.pop(),
     }));
 }
 
@@ -160,26 +160,20 @@ export function checkIfTilesLeftInBag(bag) {
 }
 
 export const findNeighbors = (tiles, tile) => {
-  let relatedTiles = tiles.filter(
-    t =>
-      t.index === tile.index - 1 ||
-      t.index === tile.index + 1 ||
-      t.index === tile.index + 15 ||
-      t.index === tile.index - 15
-  );
+  let relatedTiles = tiles.filter((t) => t.index === tile.index - 1 || t.index === tile.index + 1 || t.index === tile.index + 15 || t.index === tile.index - 15);
   // console.log(relatedTiles);
   return relatedTiles;
 };
 
-export const makeNeighborsClickable = relatedTiles => {
-  relatedTiles.forEach(tile => {
+export const makeNeighborsClickable = (relatedTiles) => {
+  relatedTiles.forEach((tile) => {
     tile.clickable = true;
   });
   return relatedTiles;
 };
 
-export const makeNeighborsUnclickable = relatedTiles => {
-  return relatedTiles.map(cell => {
+export const makeNeighborsUnclickable = (relatedTiles) => {
+  return relatedTiles.map((cell) => {
     if (!cell.tile) {
       cell.clickable = false;
     }
@@ -187,8 +181,8 @@ export const makeNeighborsUnclickable = relatedTiles => {
   });
 };
 
-export const lockTilesWithLetter = cells =>
-  cells.map(cell => {
+export const lockTilesWithLetter = (cells) =>
+  cells.map((cell) => {
     if (cell.tile) {
       cell.locked = true;
       // cell.clickable = false;
@@ -198,7 +192,7 @@ export const lockTilesWithLetter = cells =>
     return cell;
   });
 
-export const getPoints = cellsWithPoints => {
+export const getPoints = (cellsWithPoints) => {
   // console.log("in getPoints", cellsWithPoints);
   let points = 0;
   for (let i = 0; i < cellsWithPoints.length; i++) {
@@ -211,21 +205,21 @@ export const getPoints = cellsWithPoints => {
   return points;
 };
 
-export const executePoints = roundCells => {
+export const executePoints = (roundCells) => {
   return getPoints(roundCells);
 };
 
-export const makeLockedNeighborsUnclickable = newBoardCells => {
+export const makeLockedNeighborsUnclickable = (newBoardCells) => {
   // let newBoardCells = [...boardCells];
   //find locked cells
-  let lockedCellsWithTile = newBoardCells.filter(cell => cell.tile && cell.locked);
+  let lockedCellsWithTile = newBoardCells.filter((cell) => cell.tile && cell.locked);
 
   let lockedNeighbors = [];
 
   //foreach locked cell find neighbor and make them unclickable
-  lockedCellsWithTile.forEach(cell => {
+  lockedCellsWithTile.forEach((cell) => {
     let newNeighbors = findNeighbors(newBoardCells, cell);
-    newNeighbors.forEach(neighbor => lockedNeighbors.push(neighbor));
+    newNeighbors.forEach((neighbor) => lockedNeighbors.push(neighbor));
     makeNeighborsUnclickable(newNeighbors);
   });
 
@@ -235,9 +229,9 @@ export const makeLockedNeighborsUnclickable = newBoardCells => {
 export const makeRoundCellsNeighborsUnclickable = (newBoardCells, roundCells) => {
   let roundNeighbors = [];
 
-  roundCells.forEach(cell => {
+  roundCells.forEach((cell) => {
     let neighbors = findNeighbors(newBoardCells, cell);
-    neighbors.forEach(neighbor => {
+    neighbors.forEach((neighbor) => {
       roundNeighbors.push(neighbor);
     });
   });

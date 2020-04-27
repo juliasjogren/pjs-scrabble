@@ -43,7 +43,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   // const [clickedCell, setClickedCell] = useState(null);
 
   useEffect(() => {
-    console.log("Board mount", inputPlayers);
+    // console.log("Board mount", inputPlayers);
     const { boardCells, activePlayer, players } = setup(inputPlayers);
     setBoardCells(boardCells);
     setPlayerCells(activePlayer.playerCells);
@@ -52,8 +52,9 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   }, []);
 
   const clickOnCell = (cell) => {
+    // console.log(activeTile);
     if (cell.locked || cell.clickable === false) {
-      return console.log("You cant click on this cell");
+      return console.log("locked");
     }
     // console.log("First", executeBtnDisabled);
     cellClick(cell, activeTile, boardCells, playerCells);
@@ -91,6 +92,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       // if(roundCells.includes(firstGameCell) ||)
 
       if (noLockedcellsInRound) {
+        console.log(1);
         if (firstInRound === false) {
           return setExecuteBtnDisabled(true);
         }
@@ -103,7 +105,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
         velocity = 15;
       }
       if (direction === "no") {
-        console.log("only one tile");
+        // console.log("only one tile");
       }
       let nextCell = mainWord[i + 1];
 
@@ -119,6 +121,8 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     // console.log("same length", cellInLine.length === mainWord.length);
     // const sameLength = cellInLine.length === mainWord.length;
     // setExecuteBtnDisabled(sameLength);
+    console.log("cellinline", cellInLine.length, cellInLine);
+    console.log("mainword", mainWord.length, mainWord);
     if (cellInLine.length === mainWord.length) {
       setExecuteBtnDisabled(false);
     } else {
@@ -171,6 +175,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
       setActivePlayer(activePlayer);
       setShuffleTilesActive(false);
     }
+
     if (executeBtnDisabled === true) {
       return console.log("not valid word");
     }

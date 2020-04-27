@@ -4,19 +4,12 @@
 import { findPlayers } from "./components/gamePreparation";
 import { determineDirection, makeMainWord } from "./round";
 
-import {
-  createBoardCells,
-  createBag,
-  createPlayerCells,
-  drawTilesFromBag,
-  lockTilesWithLetter,
-  executePoints
-} from "./utils";
+import { createBoardCells, createBag, createPlayerCells, drawTilesFromBag, lockTilesWithLetter, executePoints } from "./utils";
 import GameOver from "./components/gameOver";
 
 import dictionary from "./dictionary.json";
 
-console.log("dictionary?", Boolean(dictionary));
+// console.log("dictionary?", Boolean(dictionary));
 
 let boardCells = [];
 let bag = [];
@@ -26,10 +19,10 @@ let activePlayer = null;
 function gamifyPlayers(inputPlayers) {
   // console.log("inputplayers", inputPlayers);
   activePlayer = inputPlayers[0];
-  return inputPlayers.map(player => {
+  return inputPlayers.map((player) => {
     player.playerCells = createPlayerCells(bag);
     // console.log("playercells", player.playerCells);
-    player.playerCells.forEach(cell => {
+    player.playerCells.forEach((cell) => {
       cell.tile.color = player.color;
     });
     // player.playerCells.forEach(cell => console.log(cell.tile.color));
@@ -37,7 +30,7 @@ function gamifyPlayers(inputPlayers) {
   });
 }
 
-export const setup = inputPlayers => {
+export const setup = (inputPlayers) => {
   // console.log("im in setup");
   let game = {};
   if (boardCells.length === 0) {
@@ -69,18 +62,16 @@ const lockWord = () => {
 
 const drawTiles = () => {
   if (bag.length === 0) return;
-  const numberOfCellsWithoutTiles = activePlayer.playerCells.filter(
-    cell => !cell.tile
-  ).length;
+  const numberOfCellsWithoutTiles = activePlayer.playerCells.filter((cell) => !cell.tile).length;
 
   if (numberOfCellsWithoutTiles === 0) return;
 
   let newTiles = drawTilesFromBag(bag, numberOfCellsWithoutTiles);
-  newTiles.forEach(tile => (tile.color = activePlayer.color));
+  newTiles.forEach((tile) => (tile.color = activePlayer.color));
   // console.log("new tiles", newTiles);
   // newTiles.forEach(tile => console.log(tile.color));
 
-  activePlayer.playerCells = activePlayer.playerCells.map(cell => {
+  activePlayer.playerCells = activePlayer.playerCells.map((cell) => {
     if (!cell.tile) {
       cell.tile = newTiles.pop();
     }
@@ -97,7 +88,7 @@ const changeActivePlayer = () => {
     activePlayer = players[0];
     activePlayer.active = true;
   } else {
-    activePlayer = players.find(player => player.id === activePlayer.id + 1);
+    activePlayer = players.find((player) => player.id === activePlayer.id + 1);
     // console.log("active player", activePlayer);
     activePlayer.active = true;
   }
@@ -108,7 +99,7 @@ const findNeighborsInWord = (notMainWord, cellToCheck, velocity, neighbors) => {
     neighbors = [];
   }
 
-  let n = notMainWord.find(cell => cellToCheck.index + velocity === cell.index);
+  let n = notMainWord.find((cell) => cellToCheck.index + velocity === cell.index);
 
   if (n && n.tile) {
     neighbors.push(n);
@@ -123,18 +114,18 @@ const findAllWords = (roundCells, direction) => {
   words.push(mainWord);
   // console.log("roundcells in findallwords", roundCells);
 
-  let notMainWord = roundCells.filter(cell => {
+  let notMainWord = roundCells.filter((cell) => {
     return !mainWord.includes(cell);
   });
 
-  mainWord.forEach(cell => {
+  mainWord.forEach((cell) => {
     if (direction === "vertical") {
       let leftNeighbors = findNeighborsInWord(notMainWord, cell, -1);
       let rightNeighbors = findNeighborsInWord(notMainWord, cell, +1);
       if (leftNeighbors.length > 0 || rightNeighbors.length > 0) {
         let word = [];
-        leftNeighbors.forEach(l => word.push(l));
-        rightNeighbors.forEach(r => word.push(r));
+        leftNeighbors.forEach((l) => word.push(l));
+        rightNeighbors.forEach((r) => word.push(r));
         word.push(cell);
         words.push(word);
       }
@@ -144,8 +135,8 @@ const findAllWords = (roundCells, direction) => {
       let downNeighbors = findNeighborsInWord(notMainWord, cell, +15);
       if (upNeighbors.length > 0 || downNeighbors.length > 0) {
         let word = [];
-        upNeighbors.forEach(u => word.push(u));
-        downNeighbors.forEach(d => word.push(d));
+        upNeighbors.forEach((u) => word.push(u));
+        downNeighbors.forEach((d) => word.push(d));
         word.push(cell);
         words.push(word);
       }
@@ -154,7 +145,7 @@ const findAllWords = (roundCells, direction) => {
   return words;
 };
 
-const findWordsInRoundCells = roundCells => {
+const findWordsInRoundCells = (roundCells) => {
   let direction = determineDirection();
   // console.log("findWordsInRoundCells direction", direction);
   let sortedRoundCells = roundCells.sort((a, b) => {
@@ -164,19 +155,19 @@ const findWordsInRoundCells = roundCells => {
   return words;
 };
 
-export const shuffleTiles = playerCells => {
-  let tilesToChange = playerCells.filter(cell => cell.tile.shuffleSelected);
+export const shuffleTiles = (playerCells) => {
+  let tilesToChange = playerCells.filter((cell) => cell.tile.shuffleSelected);
 
-  tilesToChange.forEach(cell => {
+  tilesToChange.forEach((cell) => {
     bag.push(cell.tile);
     cell.tile = null;
   });
   let numOfTiles = tilesToChange.length;
 
   let newTiles = drawTilesFromBag(bag, numOfTiles);
-  newTiles.forEach(tile => (tile.color = activePlayer.color));
+  newTiles.forEach((tile) => (tile.color = activePlayer.color));
 
-  activePlayer.playerCells = activePlayer.playerCells.map(cell => {
+  activePlayer.playerCells = activePlayer.playerCells.map((cell) => {
     if (!cell.tile) {
       cell.tile = newTiles.pop();
     }
@@ -188,24 +179,26 @@ export const shuffleTiles = playerCells => {
   return boardCells;
 };
 
-const aproveWords = words => {
-  return words.every(word => {
+const aproveWords = (words) => {
+  console.log("words in approvewords", words);
+  return words.every((word) => {
     let stringWord = "";
-    console.log(word);
+    // console.log(word);
     for (let l = 0; l < word.length; l++) {
       let letter = word[l].tile.letter;
       stringWord += letter;
     }
     console.log(stringWord);
     let findInDic = Boolean(dictionary[stringWord]);
-    console.log("findInDic", findInDic);
+    // console.log("findInDic", findInDic);
 
     return findInDic;
   });
 };
 
 export function execute(roundCells, onGameOver) {
-  console.log("execute");
+  roundCells.forEach((cell) => console.log(cell.tile));
+  // console.log("execute");
   let words = findWordsInRoundCells(roundCells);
   let wordsApproved = aproveWords(words);
 
@@ -216,7 +209,7 @@ export function execute(roundCells, onGameOver) {
     let wordPoints = executePoints(roundCells);
     activePlayer.points += wordPoints;
 
-    let noTilesLeft = activePlayer.playerCells.find(cell => cell.tile);
+    let noTilesLeft = activePlayer.playerCells.find((cell) => cell.tile);
     if (!noTilesLeft) {
       // if (noTilesLeft) {
       const sortedPlayers = players.sort((a, b) => b.points - a.points);
