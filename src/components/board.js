@@ -78,43 +78,44 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     let mainWord = makeMainWord(roundCells, direction);
     let cellInLine = [];
 
-    for (let i = 0; i < mainWord.length; i++) {
-      let cell = mainWord[i];
-      let lastCell = mainWord[mainWord.length - 1];
-      let velocity = 0;
+    let lockedRoundCells = roundCells.filter((cell) => cell.locked);
+    let firstGameCell = boardCells.find((cell) => cell.index === 112);
+    let firstInRound = roundCells.includes(firstGameCell);
+    let noLockedcellsInRound = lockedRoundCells.length < 1;
 
-      let firstGameCell = boardCells.find((cell) => cell.index === 112);
-      let lockedRoundCells = roundCells.filter((cell) => cell.locked);
-      let firstInRound = roundCells.includes(firstGameCell);
-      let noLockedcellsInRound = lockedRoundCells.length < 1;
+    if (noLockedcellsInRound) {
+      if (firstInRound === false) {
+        return setExecuteBtnDisabled(true);
+      }
+    }
 
-      // console.log("first in rouuund", firstInRound);
-      // if(roundCells.includes(firstGameCell) ||)
+    console.log("mainword incheckvalid", mainWord);
+    if (direction === "no") {
+      cellInLine = mainWord.sort((a, b) => a.index - b.index);
+    } else {
+      for (let i = 0; i < mainWord.length; i++) {
+        let cell = mainWord[i];
+        let lastCell = mainWord[mainWord.length - 1];
+        let velocity = 0;
 
-      if (noLockedcellsInRound) {
-        console.log(1);
-        if (firstInRound === false) {
-          return setExecuteBtnDisabled(true);
+        // console.log("first in rouuund", firstInRound);
+        // if(roundCells.includes(firstGameCell) ||)
+
+        if (direction === "horizontal") {
+          velocity = 1;
         }
-      }
+        if (direction === "vertical") {
+          velocity = 15;
+        }
+        let nextCell = mainWord[i + 1];
 
-      if (direction === "horizontal") {
-        velocity = 1;
-      }
-      if (direction === "vertical") {
-        velocity = 15;
-      }
-      if (direction === "no") {
-        // console.log("only one tile");
-      }
-      let nextCell = mainWord[i + 1];
+        if (nextCell && cell.index + velocity === nextCell.index) {
+          cellInLine.push(cell);
+        }
 
-      if (nextCell && cell.index + velocity === nextCell.index) {
-        cellInLine.push(cell);
-      }
-
-      if (cell === lastCell) {
-        cellInLine.push(cell);
+        if (cell === lastCell) {
+          cellInLine.push(cell);
+        }
       }
     }
 
