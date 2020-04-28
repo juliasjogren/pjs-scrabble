@@ -39,7 +39,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   const [showPlayerTiles, setShowPlayerTiles] = useState(false);
   const [toggle, setToggle] = useState("show");
   const [executeBtnDisabled, setExecuteBtnDisabled] = useState(false);
-  const [shuffleTilesActive, setShuffleTilesActive] = useState(false);
+  const [shuffleActive, setShuffleActive] = useState(false);
   // const [clickedCell, setClickedCell] = useState(null);
 
   useEffect(() => {
@@ -122,8 +122,8 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     // console.log("same length", cellInLine.length === mainWord.length);
     // const sameLength = cellInLine.length === mainWord.length;
     // setExecuteBtnDisabled(sameLength);
-    console.log("cellinline", cellInLine.length, cellInLine);
-    console.log("mainword", mainWord.length, mainWord);
+    // console.log("cellinline", cellInLine.length, cellInLine);
+    // console.log("mainword", mainWord.length, mainWord);
     if (cellInLine.length === mainWord.length) {
       setExecuteBtnDisabled(false);
     } else {
@@ -132,10 +132,10 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   };
 
   const changeShuffleTilesActive = () => {
-    if (shuffleTilesActive === true) {
-      setShuffleTilesActive(false);
+    if (shuffleActive === true) {
+      setShuffleActive(false);
     } else {
-      setShuffleTilesActive(true);
+      setShuffleActive(true);
     }
   };
   const toggleTileShuffleSelected = (tile) => {
@@ -147,7 +147,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     if (!tile) {
       return console.log("empty player cell");
     }
-    if (shuffleTilesActive) {
+    if (shuffleActive) {
       toggleTileShuffleSelected(tile);
       return;
     }
@@ -161,48 +161,40 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   };
 
   const executeClick = () => {
-    if (shuffleTilesActive === true) {
-      let activeCells = roundCells.filter((cell) => !cell.locked);
-      let aC = activeCells.length === 0;
-
-      if (aC === false) {
-        return console.log("Cant shuffle with tiles on board");
-      }
-      shuffleTiles(playerCells);
-      // fulfix för omrendering
-      // setBoardCells([...boardCells]);
-      const { activePlayer } = setup();
-      setPlayerCells(activePlayer.playerCells);
-      setActivePlayer(activePlayer);
-      setShuffleTilesActive(false);
+    if (shuffleActive) {
+      shuffle();
     }
-
-    if (executeBtnDisabled === true) {
+    if (executeBtnDisabled === true || (!shuffleActive && roundCells.length === 0)) {
       return console.log("not valid word");
     }
-    if (roundCells.length === 0) {
-      return console.log("Enter a Word");
-    }
-
-    let newBoardCells = [];
-    // console.log("roundcell", roundCells);
-    if (shuffleTilesActive == false) {
-      newBoardCells = execute(roundCells, onGameOver);
-
-      if (newBoardCells) {
-        setBoardCells(newBoardCells);
-      } else {
+    if (!shuffleActive) {
+      let newBoardCells = execute(roundCells, onGameOver);
+      if (!newBoardCells) {
         return console.log("bad Word");
       }
+      setBoardCells(newBoardCells);
     }
 
+    switchPlayer();
+  };
+
+  const switchPlayer = () => {
     const { activePlayer } = setup();
-    setToggle("Show");
-    setShowPlayerTiles(false);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
+    setToggle("Show");
+    setShowPlayerTiles(false);
+    setShuffleActive(false);
     setRoundCells([]);
     setExecuteBtnDisabled(false);
+  };
+
+  const shuffle = () => {
+    let activeCells = roundCells.filter((cell) => !cell.locked);
+    if (activeCells.length > 0) {
+      return console.log("Cant shuffle with tiles on board");
+    }
+    shuffleTiles(playerCells);
   };
 
   const toggleLetters = () => {
@@ -249,7 +241,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
         ))}
       </div>
       <div className="bottom">
-        <Button className="shuffleBtn" shufflebtnSelect={shuffleTilesActive} svg={<ShuffleIcon />} miniButton={true} onClick={changeShuffleTilesActive} />
+        <Button className="shuffleBtn" shufflebtnSelect={shuffleActive} svg={<ShuffleIcon />} miniButton={true} onClick={changeShuffleTilesActive} />
         <div className="playerCells">
           <div className="toggleBtn" onClick={() => toggleLetters()}>
             {toggle}
@@ -264,7 +256,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
               {playerCell.tile && showPlayerTiles && (
                 <div
                   className={classNames("tile", {
-                    ["shuffleSelected"]: shuffleTilesActive === true && playerCell.tile.shuffleSelected === true,
+                    ["shuffleSelected"]: shuffleActive === true && playerCell.tile.shuffleSelected === true,
                   })}
                 >
                   {playerCell.tile.letter}
@@ -273,7 +265,7 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
             </div>
           ))}
         </div>
-        <Button svg={<PlayButtonSvg />} disabled={executeBtnDisabled} miniButton={true} onClick={executeClick} />
+        <Button svg={<PlayButtonSvg />} disabled={executeBtnDisabled} miniButton={true} onClick={() => executeClick()} />
       </div>
       <div className="stuffRightOfCell">
         <Button className="button" svg={<ExitIcon />} miniButton={true} onClick={() => exitGame()} />

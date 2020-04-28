@@ -110,10 +110,7 @@ const findNeighborsInWord = (notMainWord, cellToCheck, velocity, neighbors) => {
 const findAllWords = (roundCells, direction) => {
   let words = [];
   let mainWord = makeMainWord(roundCells, direction);
-  // console.log("mainword in findallwords", mainWord);
   words.push(mainWord);
-  // console.log("roundcells in findallwords", roundCells);
-
   let notMainWord = roundCells.filter((cell) => {
     return !mainWord.includes(cell);
   });
@@ -147,11 +144,11 @@ const findAllWords = (roundCells, direction) => {
 
 const findWordsInRoundCells = (roundCells) => {
   let direction = determineDirection();
-  // console.log("findWordsInRoundCells direction", direction);
   let sortedRoundCells = roundCells.sort((a, b) => {
     return a.id - b.id;
   });
   let words = findAllWords(sortedRoundCells, direction);
+  // words.forEach((word) => console.log("word:", word));
   return words;
 };
 
@@ -180,24 +177,21 @@ export const shuffleTiles = (playerCells) => {
 };
 
 const aproveWords = (words) => {
-  console.log("words in approvewords", words);
   return words.every((word) => {
+    let checkWord = word.sort((a, b) => a.index - b.index);
     let stringWord = "";
-    // console.log(word);
     for (let l = 0; l < word.length; l++) {
-      let letter = word[l].tile.letter;
+      let letter = checkWord[l].tile.letter;
       stringWord += letter;
     }
-    console.log(stringWord);
+    // console.log(stringWord);
     let findInDic = Boolean(dictionary[stringWord]);
-    // console.log("findInDic", findInDic);
-
     return findInDic;
   });
 };
 
 export function execute(roundCells, onGameOver) {
-  roundCells.forEach((cell) => console.log(cell.tile));
+  // roundCells.forEach((cell) => console.log("execute", cell.tile));
   // console.log("execute");
   let words = findWordsInRoundCells(roundCells);
   let wordsApproved = aproveWords(words);

@@ -53,26 +53,10 @@ export const findCellsInRound = (newBoardCells, clickedCell) => {
 
   let newRoundCells = roundCells.filter((cell) => cell.tile);
 
-  // console.log("roundCells in round", newRoundCells);
-  // newRoundCells.forEach(cell => console.log(cell.tile.letter));
-
   return newRoundCells;
 };
 
-const findUnlockedNeighborsInRound = (cellToCheck, velocity, neighbors) => {
-  if (!neighbors) {
-    neighbors = [];
-  }
-
-  let n = boardCells.find((cell) => cellToCheck.index + velocity === cell.index);
-
-  if (n.tile) {
-    if (n.locked) {
-      neighbors.push(n);
-    }
-    return findUnlockedNeighborsInRound(n, velocity, neighbors);
-  } else return neighbors;
-};
+//
 
 const findLesserNeighborsInRound = (cellToCheck, velocity, neighbors) => {
   if (!neighbors) {
@@ -85,7 +69,7 @@ const findLesserNeighborsInRound = (cellToCheck, velocity, neighbors) => {
     if (n.locked) {
       neighbors.push(n);
     }
-    return findUnlockedNeighborsInRound(n, velocity, neighbors);
+    return findLesserNeighborsInRound(n, velocity, neighbors);
   } else return neighbors;
 };
 
@@ -122,7 +106,7 @@ export const makeMainWord = (roundCells, direction) => {
   // console.log("celocity", velocity);
   if (velocity !== 0) {
     let lesserRoundCells = findLesserNeighborsInRound(cellToCheck, velocity);
-    let higherRoundCells = findUnlockedNeighborsInRound(cellToCheck, velocity);
+    let higherRoundCells = findLockedNeighborsInRound(cellToCheck, velocity);
     mainWord = lesserRoundCells.concat(higherRoundCells, unlockedRoundCells);
   }
 
