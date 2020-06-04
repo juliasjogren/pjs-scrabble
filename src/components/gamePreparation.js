@@ -1,58 +1,43 @@
 import React, { useState, useRef } from "react";
 import classNames from "classnames";
 import Button from "./button";
+// import { ExitIcon, PlayButtonSvg, AddButtonSvg } from "../svgs";
 
 import "./style/gamePreparation.css";
 
 const GamePreparation = ({ onClose }) => {
   const [colors, setColors] = useState([
     { id: 1, name: "teal" },
-    { id: 2, name: "purple" },
-    { id: 3, name: "darkred" },
-    { id: 4, name: "Crimson" },
-    { id: 5, name: "yellow" },
-    { id: 6, name: "limegreen" },
+    { id: 2, name: "DarkMagenta" },
+    { id: 3, name: "firebrick" },
+    { id: 4, name: "palevioletred" },
+    { id: 5, name: "orange" },
+    { id: 6, name: "seagreen" },
   ]);
   const setColor = () => {
     let avalibleColors = colors.filter((color) => !color.picked);
     return avalibleColors[0];
   };
   const [selectedColor, setSelectedColor] = useState(setColor());
-  const [players, setPlayers] = useState([
-    // {
-    //   id: 1,
-    //   name: "Pontus",
-    //   color: "lightblue",
-    //   playerCells: [],
-    //   points: 0
-    // },
-    // {
-    //   id: 2,
-    //   name: "Julia",
-    //   color: "pink",
-    //   playerCells: [],
-    //   points: 0
-    // },
-    // {
-    //   id: 3,
-    //   name: "Belgarath",
-    //   color: "green",
-    //   playerCells: [],
-    //   points: 0
-    // }
-  ]);
+  const [players, setPlayers] = useState([]);
   const [playerName, setPlayerName] = useState("Player " + (players.length + 1));
   const playerNameRef = useRef();
-  // let inputText = "player" + (players.length + 1);
-  // export const findPlayers = () => {
-  //   return players;
-  // };
-  const playButtonSvg = (
+  const [playerId, setPlayerId] = useState(1);
+
+  const PlayButtonSvg = (
     <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
       <polyline points="0, 10 110, 50 0, 90 0, 10" />
     </svg>
   );
-  const addButtonSvg = (
+
+  const ExitIcon = (
+    <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
+      <rect x="0" y="10" width="15" height="80" transform="rotate(-40)translate(0, 20)"></rect>
+      <rect x="0" y="10" width="15" height="80" transform="rotate(40)translate(60, -45)"></rect>
+    </svg>
+  );
+
+  const AddButtonSvg = (
     <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
       <rect x="37" y="10" width="25" height="80"></rect>
       <rect x="10" y="40" width="80" height="25"></rect>
@@ -68,6 +53,31 @@ const GamePreparation = ({ onClose }) => {
     }
     setColors(colors);
     setSelectedColor(color);
+  };
+
+  const removePlayer = (player) => {
+    let newColors = [...colors];
+    let c = player.color;
+    let newPlayers = [...players];
+
+    for (let i = 0; i < newPlayers.length; i++) {
+      if (newPlayers[i].id === player.id) {
+        newPlayers.splice(i, 1);
+      }
+    }
+    setPlayers([...newPlayers]);
+
+    newColors.map((color) => {
+      if (c === color.name) {
+        color.picked = false;
+      }
+    });
+    setColors(newColors);
+    setSelectedColor(setColor());
+    setPlayerName("Player " + players.length);
+
+    playerNameRef.current.focus();
+    console.log("players:", players);
   };
 
   const addPlayer = () => {
@@ -88,13 +98,14 @@ const GamePreparation = ({ onClose }) => {
     setPlayers([
       ...players,
       {
-        id: id,
+        id: playerId,
         name: playerName,
         color: playerColor.name,
         playerCells: [],
         points: 0,
       },
     ]);
+    setPlayerId(playerId + 1);
     let col = newColors.find((color) => color === selectedColor);
     col.picked = true;
     setColors(newColors);
@@ -103,12 +114,7 @@ const GamePreparation = ({ onClose }) => {
     setPlayerName("Player " + (players.length + 2));
 
     playerNameRef.current.focus();
-    // console.log("players", players);
   };
-
-  // const startGame = () => {
-  //   console.log("startgame");
-  // };
 
   const startGame = () => {
     onClose(players);
@@ -140,11 +146,11 @@ const GamePreparation = ({ onClose }) => {
           ))}
         </div>
         <div className="AddPlayerBtn">
-          <Button title="Add player" addButton={true} svg={addButtonSvg} onClick={() => addPlayer()} />
+          <Button title="Add player" addButton={true} svg={AddButtonSvg} onClick={() => addPlayer()} />
         </div>
       </div>
       <div className="players">
-        <div className="playerTitle">players:</div>
+        {/* <div className="playerTitle">players:</div> */}
         <div className="playerList">
           {players.map((player) => (
             <div
@@ -155,12 +161,13 @@ const GamePreparation = ({ onClose }) => {
               }}
             >
               {player.name}
+              <Button className="button" svg={ExitIcon} realTinyButton={true} onClick={() => removePlayer(player)} />
             </div>
           ))}
         </div>
       </div>
       <div className="startBtn">
-        <Button title="Start game" startButton={true} svg={playButtonSvg} onClick={startGame} />
+        <Button title="Start game" startButton={true} svg={PlayButtonSvg} onClick={startGame} />
       </div>
     </div>
   );

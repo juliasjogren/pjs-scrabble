@@ -19,11 +19,14 @@
 .miniButton {
   width: 10vmin;
 }
+.realTinyButton {
+  width: 3vmin;
+  height: 3vmin;
+}
 
 .btn {
   width: 85%;
   height: 80%;
-  /* overflow: hidden; */
   border: 2px solid rgba(0, 0, 0, 0.849);
   background-color: grey;
   filter: drop-shadow(4px 4px 4px black);
@@ -36,7 +39,6 @@
 .svg:hover {
   fill: lime;
   transform: scale(0.9);
-  /* filter: drop-shadow(5px 5px 5px black); */
 }
 
 .startButton {

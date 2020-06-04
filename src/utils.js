@@ -56,15 +56,43 @@ let makeAlfa = () => [
 //   { letter: "Z", amount: 1, points: 10 }
 // ];
 
+let twoWord = [16, 28, 32, 42, 48, 56, 64, 70, 112, 154, 160, 168, 176, 182, 192, 196, 208];
+let threeWord = [0, 7, 14, 105, 119, 210, 217, 224];
+let twoLetter = [3, 11, 36, 38, 45, 52, 59, 92, 96, 98, 102, 108, 116, 122, 126, 128, 132, 165, 172, 179, 186, 188, 213, 221];
+let threeLetter = [20, 24, 76, 80, 84, 88, 136, 140, 144, 148, 200, 204];
+
 export function createBoardCells() {
   function BoardCell(index) {
     let clickableTile = null;
+    let firstCell = null;
+    let bonus = false;
+
+    if (twoLetter.find((item) => item === index)) {
+      bonus = "twoL";
+    }
+    if (threeLetter.find((item) => item === index)) {
+      bonus = "threeL";
+    }
+    if (twoWord.find((item) => item === index)) {
+      bonus = "twoW";
+    }
+    if (threeWord.find((item) => item === index) || index < 1) {
+      bonus = "threeW";
+    }
+
     if (index === 112) {
       clickableTile = true;
-    } else clickableTile = false;
+      firstCell = true;
+    } else {
+      clickableTile = false;
+      firstCell = false;
+    }
+
     return {
       index,
+      first: firstCell,
       clickable: clickableTile,
+      bonus: bonus,
       tile: null,
     };
   }
@@ -93,12 +121,10 @@ const makeRandomTileFromAlfaAndDecreaseItsAmount = (alfa) => {
 
 export const makeAllUnlockedCellsClickable = (BoardCells) => {
   let unlockedCells = BoardCells.filter((cell) => !cell.locked);
-  // console.log(unlockedCells);
   makeNeighborsClickable(unlockedCells);
 };
 
 export function createBag() {
-  // console.log("in create bag");
   const gameAlfa = makeAlfa();
   const tilesInBag = gameAlfa.reduce((total, letter) => {
     return total + letter.amount;
@@ -111,9 +137,6 @@ export function createBag() {
     bag.push(makeRandomTileFromAlfaAndDecreaseItsAmount(gameAlfa));
     i--;
   }
-
-  // console.log("bag in create bag", bag);
-
   return bag;
 }
 
@@ -138,21 +161,6 @@ export function drawTilesFromBag(bag, numberOfTiles) {
   return tiles;
 }
 
-// const findLockedNeighborsInRound = (lockedNeighbor, velocity, lockedNeighbors) => {
-//   let newBoardCells = [...boardCells];
-
-//   if (!lockedNeighbors) {
-//     lockedNeighbors = [];
-//   }
-
-//   let n = newBoardCells.find(cell => lockedNeighbor.index + velocity === cell.index);
-
-//   if (n.locked) {
-//     lockedNeighbors.push(n);
-//     return findLockedNeighborsInRound(n, velocity, lockedNeighbors);
-//   } else return lockedNeighbors;
-// };
-
 export function checkIfTilesLeftInBag(bag) {
   if (bag.length === 0) {
     return false;
@@ -161,7 +169,6 @@ export function checkIfTilesLeftInBag(bag) {
 
 export const findNeighbors = (tiles, tile) => {
   let relatedTiles = tiles.filter((t) => t.index === tile.index - 1 || t.index === tile.index + 1 || t.index === tile.index + 15 || t.index === tile.index - 15);
-  // console.log(relatedTiles);
   return relatedTiles;
 };
 
@@ -185,38 +192,58 @@ export const lockTilesWithLetter = (cells) =>
   cells.map((cell) => {
     if (cell.tile) {
       cell.locked = true;
-      // cell.clickable = false;
       let neighbors = findNeighbors(cells, cell);
       makeNeighborsClickable(neighbors);
     }
     return cell;
   });
 
-export const getPoints = (cellsWithPoints) => {
-  // console.log("in getPoints", cellsWithPoints);
+export const executePoints = (words) => {
   let points = 0;
-  for (let i = 0; i < cellsWithPoints.length; i++) {
-    let tile = cellsWithPoints[i].tile;
-    points += tile.points;
-  }
-  // let points = countPoints(newActiveCells);
 
-  // console.log("Current word points", points);
+  for (let i = 0; i < words.length; i++) {
+    let word = words[i];
+    let doubbleWord = 0;
+    let tripleWord = 0;
+    let wordPoints = 0;
+
+    word.forEach((cell) => {
+      if (cell.locked) {
+      }
+      let cellPoints = cell.tile.points;
+      if (!cell.locked) {
+        if (cell.bonus === "twoL") {
+          cellPoints = cellPoints * 2;
+        }
+        if (cell.bonus === "threeL") {
+          cellPoints = cellPoints * 3;
+        }
+        if (cell.bonus === "twoW") {
+          doubbleWord += 1;
+        }
+        if (cell.bonus === "threeW") {
+          tripleWord += 1;
+        }
+      }
+      wordPoints += cellPoints;
+    });
+
+    for (let j = 0; j < doubbleWord; j++) {
+      wordPoints = wordPoints * 2;
+    }
+    for (let j = 0; j < tripleWord; j++) {
+      wordPoints = wordPoints * 3;
+    }
+    points += wordPoints;
+  }
+
   return points;
 };
 
-export const executePoints = (roundCells) => {
-  return getPoints(roundCells);
-};
-
 export const makeLockedNeighborsUnclickable = (newBoardCells) => {
-  // let newBoardCells = [...boardCells];
-  //find locked cells
   let lockedCellsWithTile = newBoardCells.filter((cell) => cell.tile && cell.locked);
-
   let lockedNeighbors = [];
 
-  //foreach locked cell find neighbor and make them unclickable
   lockedCellsWithTile.forEach((cell) => {
     let newNeighbors = findNeighbors(newBoardCells, cell);
     newNeighbors.forEach((neighbor) => lockedNeighbors.push(neighbor));

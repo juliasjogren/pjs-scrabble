@@ -4,10 +4,11 @@ import Button from "./button";
 
 import "./style/startWindow.css";
 import GamePreparation from "./gamePreparation";
+// import { PlayOrGoBack } from "../svgs";
 
 const StartWindow = ({ onClose }) => {
   const [showGamePreparation, setShowGamePreparation] = useState(false);
-  const PlayButtonSvg = () => {
+  const PlayOrGoBack = () => {
     if (!showGamePreparation) {
       return (
         <svg className="svg" viewBox="0 0 100 100" width="100%" height="100%">
@@ -39,7 +40,7 @@ const StartWindow = ({ onClose }) => {
         </div> */}
         {/* <div className="header">Scrabble</div> */}
         <div className="buttons">
-          <Button svg={<PlayButtonSvg />} onClick={() => toggleGamePreparation()} />
+          <Button svg={<PlayOrGoBack />} onClick={() => toggleGamePreparation()} />
           {/* <Button buttonText={"LeaderBoard"} onClick={() => console.log("LeaderBoard")} /> */}
         </div>
         {showGamePreparation && <GamePreparation onClose={onClose} />}

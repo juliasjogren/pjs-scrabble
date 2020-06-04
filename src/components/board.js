@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import BoardCell from "./boardCell";
 import Button from "./button";
 import ScoreBoard from "./scoreBoard";
-// import ActivePlayerInfo from "./activePlayerInfo";
 import { setup, execute, shuffleTiles } from "../game";
 import { moveTileToPlayerCells, cellClick, findCellsInRound, determineDirection, makeMainWord } from "../round";
 import { findNeighbors, makeAllUnlockedCellsClickable } from "../utils";
@@ -40,32 +39,14 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   const [toggle, setToggle] = useState("show");
   const [executeBtnDisabled, setExecuteBtnDisabled] = useState(false);
   const [shuffleActive, setShuffleActive] = useState(false);
-  // const [clickedCell, setClickedCell] = useState(null);
 
   useEffect(() => {
-    // console.log("Board mount", inputPlayers);
     const { boardCells, activePlayer, players } = setup(inputPlayers);
     setBoardCells(boardCells);
     setPlayerCells(activePlayer.playerCells);
     setActivePlayer(activePlayer);
     setPlayers(players);
   }, []);
-
-  const clickOnCell = (cell) => {
-    // console.log(activeTile);
-    if (cell.locked || cell.clickable === false) {
-      return console.log("locked");
-    }
-    // console.log("First", executeBtnDisabled);
-    cellClick(cell, activeTile, boardCells, playerCells);
-    setActiveTile(null);
-    let newRoundCells = findCellsInRound(boardCells, cell);
-    let filterdRoundCells = newRoundCells.filter((cell) => cell.tile);
-    setRoundCells(filterdRoundCells);
-    // CheckifValidWord(cell);
-    makeAllUnlockedCellsClickable(boardCells);
-    // console.log("round cells in clicked cells", roundCells);
-  };
 
   useEffect(() => {
     if (roundCells && roundCells.length) {
@@ -74,73 +55,27 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
   }, [roundCells]);
 
   const CheckifValidWord = (clickedCell) => {
-    let direction = determineDirection();
-    let mainWord = makeMainWord(roundCells, direction);
-    let cellInLine = [];
-
-    let lockedRoundCells = roundCells.filter((cell) => cell.locked);
-    let firstGameCell = boardCells.find((cell) => cell.index === 112);
-    let firstInRound = roundCells.includes(firstGameCell);
-    let noLockedcellsInRound = lockedRoundCells.length < 1;
-
-    if (noLockedcellsInRound) {
-      if (firstInRound === false) {
-        return setExecuteBtnDisabled(true);
-      }
-    }
-
-    console.log("mainword incheckvalid", mainWord);
-    if (direction === "no") {
-      cellInLine = mainWord.sort((a, b) => a.index - b.index);
-    } else {
-      for (let i = 0; i < mainWord.length; i++) {
-        let cell = mainWord[i];
-        let lastCell = mainWord[mainWord.length - 1];
-        let velocity = 0;
-
-        // console.log("first in rouuund", firstInRound);
-        // if(roundCells.includes(firstGameCell) ||)
-
-        if (direction === "horizontal") {
-          velocity = 1;
-        }
-        if (direction === "vertical") {
-          velocity = 15;
-        }
-        let nextCell = mainWord[i + 1];
-
-        if (nextCell && cell.index + velocity === nextCell.index) {
-          cellInLine.push(cell);
-        }
-
-        if (cell === lastCell) {
-          cellInLine.push(cell);
-        }
-      }
-    }
-
-    // console.log("same length", cellInLine.length === mainWord.length);
-    // const sameLength = cellInLine.length === mainWord.length;
-    // setExecuteBtnDisabled(sameLength);
-    // console.log("cellinline", cellInLine.length, cellInLine);
-    // console.log("mainword", mainWord.length, mainWord);
-    if (cellInLine.length === mainWord.length) {
+    if (shuffleActive) {
       setExecuteBtnDisabled(false);
     } else {
-      setExecuteBtnDisabled(true);
+      let firstRound = checkIfFirstRound();
+      if (firstRound === false) {
+        checkForLockedCell();
+      }
+      checkIfRoundCellsConnected();
     }
   };
+  const clickOnCell = (cell) => {
+    if (cell.locked || cell.clickable === false) {
+      return console.log("locked");
+    }
 
-  const changeShuffleTilesActive = () => {
-    if (shuffleActive === true) {
-      setShuffleActive(false);
-    } else {
-      setShuffleActive(true);
-    }
-  };
-  const toggleTileShuffleSelected = (tile) => {
-    tile.shuffleSelected = !tile.shuffleSelected;
-    setPlayerCells([...playerCells]);
+    cellClick(cell, activeTile, boardCells, playerCells);
+    setActiveTile(null);
+
+    let newRoundCells = findCellsInRound(boardCells, cell);
+    setRoundCells(newRoundCells);
+    makeAllUnlockedCellsClickable(boardCells);
   };
 
   const playerCellClick = ({ tile }) => {
@@ -150,10 +85,6 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     if (shuffleActive) {
       toggleTileShuffleSelected(tile);
       return;
-    }
-    if (activeTile) {
-      moveTileToPlayerCells(activeTile, boardCells, playerCells);
-      setActiveTile(null);
     }
     if (tile) {
       setActiveTile(tile);
@@ -170,12 +101,66 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     if (!shuffleActive) {
       let newBoardCells = execute(roundCells, onGameOver);
       if (!newBoardCells) {
-        return console.log("bad Word");
+        return;
       }
       setBoardCells(newBoardCells);
     }
 
     switchPlayer();
+  };
+  const checkIfFirstRound = () => {
+    let lockedCells = boardCells.find((cell) => cell.locked);
+    let firstGameCell = boardCells.find((cell) => cell.index === 112);
+    let firstInRound = roundCells.includes(firstGameCell);
+    if (!lockedCells) {
+      if (firstInRound) {
+        setExecuteBtnDisabled(false);
+      } else setExecuteBtnDisabled(true);
+      return true;
+    }
+    return false;
+  };
+
+  const checkForLockedCell = () => {
+    let lockedRoundCells = roundCells.filter((cell) => cell.locked);
+    if (lockedRoundCells && lockedRoundCells.length > 0) {
+      setExecuteBtnDisabled(false);
+    } else setExecuteBtnDisabled(true);
+  };
+
+  const checkIfRoundCellsConnected = () => {
+    const direction = determineDirection();
+    if (direction === "no") return;
+
+    const mainWord = makeMainWord(roundCells, direction);
+    const sortedMainWord = mainWord.sort((a, b) => a.index - b.index);
+
+    for (let i = 0; i < sortedMainWord.length; i++) {
+      const cell = sortedMainWord[i];
+      const nextCellInList = sortedMainWord[i + 1];
+      if (!nextCellInList) continue;
+      const nextPosition = direction === "horizontal" ? 1 : 15;
+      const nextCellInListIsAdjacent = cell.index + nextPosition === nextCellInList.index;
+
+      if (!nextCellInListIsAdjacent) {
+        return setExecuteBtnDisabled(true);
+      }
+    }
+
+    return setExecuteBtnDisabled(false);
+  };
+
+  const changeShuffleTilesActive = () => {
+    if (shuffleActive === true) {
+      setShuffleActive(false);
+    } else {
+      setShuffleActive(true);
+    }
+    setExecuteBtnDisabled(false);
+  };
+  const toggleTileShuffleSelected = (tile) => {
+    tile.shuffleSelected = !tile.shuffleSelected;
+    setPlayerCells([...playerCells]);
   };
 
   const switchPlayer = () => {
@@ -220,7 +205,6 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
     <div className="board">
       <div className="stuffLeftOfCell">
         <ScoreBoard players={players} />
-        {/* <Button className="shuffleBtn" buttonText={<ShuffleIcon />} /> */}
       </div>
       <div className="cells">
         {boardCells.map((cell) => (
@@ -233,7 +217,6 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
                 }}
               >
                 <div className="tileLetter">{cell.tile.letter}</div>
-                <div></div>
                 <div className="tilePoints">{cell.tile.points}</div>
               </div>
             )}
@@ -247,19 +230,16 @@ const Board = ({ players: inputPlayers, onGameOver }) => {
             {toggle}
           </div>
           {playerCells.map((playerCell) => (
-            <div
-              className="playerCell"
-              // className={classNames("playerCell", { active: isPlayerCellActive(playerCell) })}
-              key={playerCell.index}
-              onClick={() => playerCellClick(playerCell)}
-            >
+            <div className="playerCell" key={playerCell.index} onClick={() => playerCellClick(playerCell)}>
               {playerCell.tile && showPlayerTiles && (
                 <div
                   className={classNames("tile", {
                     ["shuffleSelected"]: shuffleActive === true && playerCell.tile.shuffleSelected === true,
+                    activeTile: activeTile && playerCell.tile === activeTile,
                   })}
                 >
-                  {playerCell.tile.letter}
+                  <div className="playerTileLetter">{playerCell.tile.letter}</div>
+                  <div className="tilePoints">{playerCell.tile.points}</div>
                 </div>
               )}
             </div>
